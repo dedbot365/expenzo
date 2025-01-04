@@ -14,6 +14,7 @@ namespace expenzo.Database
             _databasePath = Path.Combine(folderPath, "expenzo.db");
         }
 
+
         public SqliteConnection GetConnection()
         {
             return new SqliteConnection($"Data Source={_databasePath}");
