@@ -43,9 +43,6 @@ namespace expenzo.Services
 
         public Task<bool> IsUserLoggedIn()
         {
-            // Implement logic to check if the user is logged in
-            // This could be checking a session, token, etc.
-            // For simplicity, we are using an in-memory dictionary
             return Task.FromResult(_loggedInUsers.ContainsKey("username") && _loggedInUsers["username"]);
         }
     }

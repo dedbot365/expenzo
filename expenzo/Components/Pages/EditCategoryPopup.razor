@@ -9,13 +9,20 @@
 
     [Parameter]
     public Models.Category CategoryToEdit { get; set; }
+    private string errorMessage;
 
     private void UpdateCategory()
     {
-        // Add logic to update the category
+        if (string.IsNullOrWhiteSpace(CategoryToEdit.Name))
+        {
+            errorMessage = "Category name cannot be empty.";
+            return;
+        }
+
         CategoryDao.UpdateCategory(CategoryToEdit);
 
         OnClose.InvokeAsync();
+        errorMessage = null;
     }
 }
 
@@ -32,6 +39,10 @@
                     <div class="mb-3">
                         <label for="categoryName" class="form-label">Category Name:</label>
                         <input type="text" class="form-control" id="categoryName" @bind="CategoryToEdit.Name">
+                        @if (!string.IsNullOrEmpty(errorMessage))
+                        {
+                            <div class="text-danger">@errorMessage</div>
+                        }
                     </div>
                 </div>
                 <div class="modal-footer">
