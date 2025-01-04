@@ -1,0 +1,53 @@
+﻿@code {
+    [Parameter]
+    public bool IsVisible { get; set; }
+
+    [Parameter]
+    public EventCallback OnClose { get; set; }
+
+    private Models.Category newCategory = new Models.Category{};
+    private int nextCategoryId = 1;
+
+    private void AddCategory()
+    {
+        // Automatically assign the Id to the new category
+        newCategory.Id = nextCategoryId++;
+        
+        // Add logic to save the new category
+        
+
+        OnClose.InvokeAsync();
+
+        // Reset newCategory for the next entry
+        newCategory = new Models.Category { Id = nextCategoryId };
+    }
+}
+
+@if (IsVisible)
+{
+    <div class="modal d-block" tabindex="-1" style="background-color: rgba(0, 0, 0, 0.5);">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add New Category</h5>
+                    <button type="button" class="btn-close" aria-label="Close" @onclick="() => OnClose.InvokeAsync()"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="categoryName" class="form-label">Category Name:</label>
+                        <input type="text" id="categoryName" class="form-control" @bind="newCategory.Name" />
+                    </div>
+                    <div>
+                        <strong>Id:</strong> @newCategory.Id
+                        <br />
+                        <strong>Name:</strong> @newCategory.Name
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" @onclick="AddCategory">Save</button>
+                    <button type="button" class="btn btn-secondary" @onclick="() => OnClose.InvokeAsync()">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
