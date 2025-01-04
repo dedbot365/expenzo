@@ -2,8 +2,10 @@
 
 <h3>Debt</h3>
 <button class="btn btn-primary" @onclick="ShowAddDebtPopup">Add Debt</button>
+<button class="btn btn-secondary" @onclick="ShowFilterDebtPopup">Filter Debts</button>
 <AddDebtPopup IsVisible="isAddDebtPopupVisible" OnClose="HideAddDebtPopup" />
 <PayDebtPopup IsVisible="isPayDebtPopupVisible" OnClose="HidePayDebtPopup" SelectedDebt="selectedDebt" />
+<FilterDebtPopup IsVisible="isFilterDebtPopupVisible" OnClose="HideFilterDebtPopup" OnFilter="ApplyFilter" />
 
 <table class="table">
     <thead>
@@ -41,6 +43,7 @@
 {
     private bool isAddDebtPopupVisible = false;
     private bool isPayDebtPopupVisible = false;
+    private bool isFilterDebtPopupVisible = false;
     private List<Models.Debt> debts = new List<Models.Debt>();
     private Models.Debt selectedDebt;
 
@@ -73,5 +76,20 @@
     {
         isPayDebtPopupVisible = false;
         debts = DebtDao.GetDebts();
+    }
+
+    private void ShowFilterDebtPopup()
+    {
+        isFilterDebtPopupVisible = true;
+    }
+
+    private void HideFilterDebtPopup()
+    {
+        isFilterDebtPopupVisible = false;
+    }
+
+    private void ApplyFilter(List<Models.Debt> filteredDebts)
+    {
+        debts = filteredDebts;
     }
 }

@@ -1,0 +1,83 @@
+﻿@page "/filter-debt-popup"
+@inject DebtDao DebtDao
+
+@code {
+    [Parameter]
+    public bool IsVisible { get; set; }
+
+    [Parameter]
+    public EventCallback OnClose { get; set; }
+
+    [Parameter]
+    public EventCallback<List<Models.Debt>> OnFilter { get; set; }
+
+    private DateTime? dueDateStart;
+    private DateTime? dueDateEnd;
+    private string selectedSource;
+    private string selectedStatus;
+    private List<string> sources = new List<string>();
+    private List<string> statuses = new List<string> { "PendingDebt", "PaidDebts" };
+
+    protected override void OnInitialized()
+    {
+        sources = DebtDao.GetDebts().Select(d => d.DebtSource).Distinct().ToList();
+    }
+
+    private void ApplyFilter()
+    {
+        var filteredDebts = DebtDao.GetDebts().Where(debt =>
+            (!dueDateStart.HasValue || debt.DebtDueDate >= dueDateStart.Value) &&
+            (!dueDateEnd.HasValue || debt.DebtDueDate <= dueDateEnd.Value) &&
+            (string.IsNullOrEmpty(selectedSource) || debt.DebtSource.Equals(selectedSource, StringComparison.OrdinalIgnoreCase)) &&
+            (string.IsNullOrEmpty(selectedStatus) || debt.DebtStatus.Equals(selectedStatus, StringComparison.OrdinalIgnoreCase))
+        ).ToList();
+
+        OnFilter.InvokeAsync(filteredDebts);
+        OnClose.InvokeAsync();
+    }
+}
+
+@if (IsVisible)
+{
+    <div class="modal d-block" tabindex="-1" style="background-color: rgba(0, 0, 0, 0.5);">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Filter Debts</h5>
+                    <button type="button" class="btn-close" aria-label="Close" @onclick="() => OnClose.InvokeAsync()"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="dueDateStart" class="form-label">Due Date Start:</label>
+                        <input type="date" id="dueDateStart" class="form-control" @bind="dueDateStart" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="dueDateEnd" class="form-label">Due Date End:</label>
+                        <input type="date" id="dueDateEnd" class="form-control" @bind="dueDateEnd" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="source" class="form-label">Source:</label>
+                        <select id="source" class="form-control" @bind="selectedSource">
+                            <option value="">All</option>
+                            @foreach (var source in sources)
+                            {
+                                <option value="@source">@source</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="status" class="form-label">Status:</label>
+                        <select id="status" class="form-control" @bind="selectedStatus">
+                            <option value="">All</option>
+                            @foreach (var status in statuses)
+                            {
+                                <option value="@status">@status</option>
+                            }
+                        </select>
+                    </div>
+                    <button class="btn btn-primary" @onclick="ApplyFilter">Apply Filter</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
