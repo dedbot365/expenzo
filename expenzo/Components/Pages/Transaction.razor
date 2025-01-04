@@ -1,6 +1,31 @@
 ﻿@page "/transaction"
+
 <h3>Transaction</h3>
 
-@code {
-    
+@code
+{
+    Models.Transaction transaction = new Models.Transaction()
+    {
+        Id = 1,
+        Amount = 100.50m,
+        Title = "Grocery Shopping",
+        Type = "Expense",
+        CategoryName = "Grocery",
+        Date = DateTime.Now,
+        Remarks = "Bought groceries for the week"
+    };
 }
+<br/>
+Id: @transaction.Id
+<br/>
+Amount: @transaction.Amount
+<br/>
+Title: @transaction.Title
+<br/>
+Type: @transaction.Type
+<br/>
+Category: @transaction.CategoryName
+<br/>
+Date: @transaction.Date.ToString("MM/dd/yyyy")
+<br/>
+Remarks: @transaction.Remarks
