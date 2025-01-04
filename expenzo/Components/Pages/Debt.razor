@@ -1,11 +1,23 @@
 ﻿@page "/debt"
 
-
-
 <h3>Debt</h3>
+<button class="btn btn-primary" @onclick="ShowPopup">Add Debt</button>
+<AddDebtPopup IsVisible="isPopupVisible" OnClose="HidePopup" />
 
 @code
 {
+    private bool isPopupVisible = false;
+
+    private void ShowPopup()
+    {
+        isPopupVisible = true;
+    }
+
+    private void HidePopup()
+    {
+        isPopupVisible = false;
+    }
+
     Models.Debt debt = new Models.Debt()
     {
         DebtAmount = 5000.00m,
@@ -14,7 +26,6 @@
         DebtSource = "Bank Loan"
     };
 }
-
 <br/>
 Debt Amount: @debt.DebtAmount
 <br/>

@@ -1,4 +1,8 @@
-﻿@page "/category"
+﻿@* @page "/category"
+
+Id:@category.Id
+<br/>
+Name:@category.Name
 
 <h3>Category</h3>
 @code
@@ -9,7 +13,33 @@
         Name="Grocery"
     };
 
-} 
+} *@
+@page "/category"
+
+<h3>Category</h3>
+<button class="btn btn-primary" @onclick="ShowPopup">Add Category</button>
+<AddCategoryPopup IsVisible="isPopupVisible" OnClose="HidePopup" />
+
+@code
+{
+    private bool isPopupVisible = false;
+
+    private void ShowPopup()
+    {
+        isPopupVisible = true;
+    }
+
+    private void HidePopup()
+    {
+        isPopupVisible = false;
+    }
+
+    Models.Category category = new Models.Category()
+    {
+        Id = 1,
+        Name = "Grocery"
+    };
+}
 <br/>
 Id:@category.Id
 <br/>
