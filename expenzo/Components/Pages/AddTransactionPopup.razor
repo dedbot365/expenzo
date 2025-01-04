@@ -10,12 +10,9 @@
 
     private void AddTransaction()
     {
-        // Automatically assign the Id to the new transaction
         newTransaction.TransactionId = nextTransactionId++;
         
-        // Add logic to save the new transaction
-        // For example, you can call a service to save the transaction to a database
-
+        
         OnClose.InvokeAsync();
 
         // Reset newTransaction for the next entry

@@ -7,4 +7,13 @@
 @using Microsoft.JSInterop
 @using expenzo
 @using expenzo.Components
+@using expenzo.Database
+@using expenzo.Models
+@using expenzo.Services
+@using expenzo.Services.Interfaces
 
+@* Dependency Injection *@
+
+@inject CategoryDao CategoryDao
+@inject IUserService UserService
+@inject NavigationManager Navigation
