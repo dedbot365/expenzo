@@ -1,8 +1,13 @@
 ﻿@page "/category"
-@inject expenzo.Database.CategoryDao CategoryDao
 
 <h3>Category</h3>
-<button class="btn btn-primary" @onclick="ShowAddPopup">Add Category</button>
+
+<div class="d-flex align-items-center mb-3">
+    <input type="text" class="form-control me-2" style="width: 60%;" placeholder="Search by category name" @bind="searchTerm" @bind:event="oninput" />
+    <button class="btn btn-secondary me-2" @onclick="FilterCategories">Search</button>
+    <button class="btn btn-primary" @onclick="ShowAddPopup">Add Category</button>
+</div>
+
 <AddCategoryPopup IsVisible="isAddPopupVisible" OnClose="HideAddPopup" />
 <EditCategoryPopup IsVisible="isEditPopupVisible" OnClose="HideEditPopup" CategoryToEdit="categoryToEdit" />
 
@@ -15,7 +20,7 @@
         </tr>
     </thead>
     <tbody>
-        @foreach (var category in categories)
+        @foreach (var category in filteredCategories)
         {
             <tr>
                 <td>@category.Id</td>
@@ -34,11 +39,14 @@
     private bool isAddPopupVisible = false;
     private bool isEditPopupVisible = false;
     private List<Models.Category> categories = new List<Models.Category>();
+    private List<Models.Category> filteredCategories = new List<Models.Category>();
     private Models.Category categoryToEdit = new Models.Category();
+    private string searchTerm = string.Empty;
 
     protected override async Task OnInitializedAsync()
     {
         categories = await Task.Run(() => CategoryDao.GetCategories());
+        filteredCategories = categories;
     }
 
     private void ShowAddPopup()
@@ -50,6 +58,7 @@
     {
         isAddPopupVisible = false;
         categories = CategoryDao.GetCategories();
+        FilterCategories();
     }
 
     private void ShowEditPopup(Models.Category category)
@@ -62,11 +71,27 @@
     {
         isEditPopupVisible = false;
         categories = CategoryDao.GetCategories();
+        FilterCategories();
     }
 
     private void DeleteCategory(int categoryId)
     {
         CategoryDao.DeleteCategory(categoryId);
         categories = CategoryDao.GetCategories();
+        FilterCategories();
+    }
+
+    private void FilterCategories()
+    {
+        if (string.IsNullOrWhiteSpace(searchTerm))
+        {
+            filteredCategories = categories;
+        }
+        else
+        {
+            filteredCategories = categories
+                .Where(c => c.Name.Contains(searchTerm, StringComparison.OrdinalIgnoreCase))
+                .ToList();
+        }
     }
 }

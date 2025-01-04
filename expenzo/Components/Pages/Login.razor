@@ -1,0 +1,52 @@
+﻿@page "/login"
+@using expenzo.Services.Interfaces;
+@using expenzo.Models;
+@inject IUserService UserService
+@inject NavigationManager Navigation
+
+<h3>Login</h3>
+
+<EditForm Model="@loginModel" OnValidSubmit="HandleLogin">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="mb-3">
+        <label for="username" class="form-label">Username</label>
+        <InputText id="username" class="form-control" @bind-Value="loginModel.UserName" />
+    </div>
+    <div class="mb-3">
+        <label for="password" class="form-label">Password</label>
+        <InputText id="password" type="password" class="form-control" @bind-Value="loginModel.Password" />
+    </div>
+    <button type="submit" class="btn btn-primary">Login</button>
+    <button type="button" class="btn btn-secondary" @onclick="NavigateToRegister">Register</button>
+</EditForm>
+
+@if (!string.IsNullOrEmpty(errorMessage))
+{
+    <div class="alert alert-danger">@errorMessage</div>
+}
+
+@code {
+    private User loginModel = new User();
+    private string errorMessage;
+
+    private async Task HandleLogin()
+    {
+        var user = await UserService.LoginUser(loginModel.UserName, loginModel.Password);
+        if (user != null)
+        {
+            // Store user information in session or local storage
+            Navigation.NavigateTo("/dashboard");
+        }
+        else
+        {
+            errorMessage = "Invalid username or password.";
+        }
+    }
+
+    private void NavigateToRegister()
+    {
+        Navigation.NavigateTo("/register");
+    }
+}
