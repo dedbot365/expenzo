@@ -63,6 +63,12 @@
         <PackageReference Include="Microsoft.AspNetCore.Components.WebView.Maui" Version="$(MauiVersion)" />
         <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="8.0.1" />
         <PackageReference Include="MudBlazor" Version="7.15.0" />
+        <PackageReference Include="SQLite" Version="3.13.0" />
+        <PackageReference Include="System.Data.SQLite" Version="1.0.119" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Base\" />
     </ItemGroup>
 
 </Project>
