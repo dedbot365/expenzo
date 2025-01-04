@@ -1,5 +1,87 @@
-﻿<h3>PayDebtPopup</h3>
+﻿@page "/pay-debt-popup"
+@inject DebtDao DebtDao
 
 @code {
+    [Parameter]
+    public bool IsVisible { get; set; }
 
+    [Parameter]
+    public EventCallback OnClose { get; set; }
+
+    [Parameter]
+    public Models.Debt SelectedDebt { get; set; }
+
+    private decimal paymentAmount;
+    private string message;
+    private string messageClass;
+
+    protected override void OnParametersSet()
+    {
+        if (IsVisible)
+        {
+            ResetMessage();
+        }
+    }
+
+    private void ResetMessage()
+    {
+        message = string.Empty;
+        messageClass = string.Empty;
+    }
+
+    private void PayDebt()
+    {
+        if (SelectedDebt.DebtStatus == "PaidDebts")
+        {
+            message = "You have already paid the amount.";
+            messageClass = "alert alert-success";
+            return;
+        }
+
+        if (paymentAmount > SelectedDebt.DebtAmount)
+        {
+            message = "Payment amount cannot be more than the debt amount.";
+            messageClass = "alert alert-danger";
+            return;
+        }
+
+        SelectedDebt.DebtAmount -= paymentAmount;
+
+        if (SelectedDebt.DebtAmount == 0)
+        {
+            SelectedDebt.DebtStatus = "PaidDebts";
+        }
+
+        DebtDao.UpdateDebt(SelectedDebt);
+
+        message = "Payment successful.";
+        messageClass = "alert alert-success";
+    }
+}
+
+@if (IsVisible)
+{
+    <div class="modal d-block" tabindex="-1" style="background-color: rgba(0, 0, 0, 0.5);">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Pay Debt</h5>
+                    <button type="button" class="btn-close" aria-label="Close" @onclick="() => OnClose.InvokeAsync()"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="paymentAmount" class="form-label">Payment Amount:</label>
+                        <input type="number" id="paymentAmount" class="form-control" @bind="paymentAmount" />
+                    </div>
+                    <div class="d-flex justify-content-end">
+                        <button class="btn btn-primary" @onclick="PayDebt">Pay</button>
+                    </div>
+                    @if (!string.IsNullOrEmpty(message))
+                    {
+                        <div class="@messageClass mt-3">@message</div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
 }

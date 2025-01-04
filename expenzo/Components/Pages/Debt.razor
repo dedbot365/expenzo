@@ -1,8 +1,19 @@
 ﻿@page "/debt"
 
 <h3>Debt</h3>
-<button class="btn btn-primary" @onclick="ShowPopup">Add Debt</button>
-<AddDebtPopup IsVisible="isPopupVisible" OnClose="HidePopup" />
+<div style="display: flex; justify-content: space-between; align-items: center;">
+    <div style="flex-grow: 1;">
+        <input type="text" @bind="searchTerm" placeholder="Search by Remark" class="form-control" style="display:inline-block; width:60%; margin-right:5px;" />
+        <button class="btn btn-secondary" @onclick="SearchDebts" style="margin-right:5px;">Search</button>
+        <button class="btn btn-secondary" @onclick="ShowFilterDebtPopup" style="margin-right:5px;">Filter Debts</button>
+    </div>
+    <div style="display: flex; align-items: center; margin-left: -20%;">
+        <button class="btn btn-primary" @onclick="ShowAddDebtPopup">Add Debt</button>
+    </div>
+</div>
+<AddDebtPopup IsVisible="isAddDebtPopupVisible" OnClose="HideAddDebtPopup" />
+<PayDebtPopup IsVisible="isPayDebtPopupVisible" OnClose="HidePayDebtPopup" SelectedDebt="selectedDebt" />
+<FilterDebtPopup IsVisible="isFilterDebtPopupVisible" OnClose="HideFilterDebtPopup" OnFilter="ApplyFilter" />
 
 <table class="table">
     <thead>
@@ -13,7 +24,8 @@
             <th>Due Date</th>
             <th>Source</th>
             <th>Status</th>
-            <th>Remark</th> <!-- New column -->
+            <th>Remark</th>
+            <th>Actions</th>
         </tr>
     </thead>
     <tbody>
@@ -26,7 +38,10 @@
                 <td>@debt.DebtDueDate.ToString("MM/dd/yyyy")</td>
                 <td>@debt.DebtSource</td>
                 <td>@(debt.DebtStatus == "PaidDebts" ? "Paid Debts" : "Pending Debt")</td>
-                <td>@debt.Remark</td> <!-- New column -->
+                <td>@debt.Remark</td>
+                <td>
+                    <button class="btn btn-success" @onclick="() => ShowPayDebtPopup(debt)">Pay Debt</button>
+                </td>
             </tr>
         }
     </tbody>
@@ -34,8 +49,12 @@
 
 @code
 {
-    private bool isPopupVisible = false;
+    private bool isAddDebtPopupVisible = false;
+    private bool isPayDebtPopupVisible = false;
+    private bool isFilterDebtPopupVisible = false;
     private List<Models.Debt> debts = new List<Models.Debt>();
+    private Models.Debt selectedDebt;
+    private string searchTerm;
 
     [Inject]
     private DebtDao DebtDao { get; set; }
@@ -45,14 +64,52 @@
         debts = DebtDao.GetDebts();
     }
 
-    private void ShowPopup()
+    private void ShowAddDebtPopup()
     {
-        isPopupVisible = true;
+        isAddDebtPopupVisible = true;
     }
 
-    private void HidePopup()
+    private void HideAddDebtPopup()
     {
-        isPopupVisible = false;
+        isAddDebtPopupVisible = false;
         debts = DebtDao.GetDebts();
+    }
+
+    private void ShowPayDebtPopup(Models.Debt debt)
+    {
+        selectedDebt = debt;
+        isPayDebtPopupVisible = true;
+    }
+
+    private void HidePayDebtPopup()
+    {
+        isPayDebtPopupVisible = false;
+    }
+
+    private void ShowFilterDebtPopup()
+    {
+        isFilterDebtPopupVisible = true;
+    }
+
+    private void HideFilterDebtPopup()
+    {
+        isFilterDebtPopupVisible = false;
+    }
+
+    private void ApplyFilter(List<Models.Debt> filteredDebts)
+    {
+        debts = filteredDebts;
+    }
+
+    private void SearchDebts()
+    {
+        if (!string.IsNullOrEmpty(searchTerm))
+        {
+            debts = DebtDao.GetDebts().Where(d => d.Remark.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)).ToList();
+        }
+        else
+        {
+            debts = DebtDao.GetDebts();
+        }
     }
 }
