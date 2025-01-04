@@ -65,6 +65,7 @@
         <PackageReference Include="MudBlazor" Version="7.15.0" />
         <PackageReference Include="SQLite" Version="3.13.0" />
         <PackageReference Include="System.Data.SQLite" Version="1.0.119" />
+        <PackageReference Include="Microsoft.Data.Sqlite" Version="6.0.0" />
     </ItemGroup>
 
     <ItemGroup>
