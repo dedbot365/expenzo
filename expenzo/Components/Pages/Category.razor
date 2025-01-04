@@ -1,6 +1,17 @@
 ﻿@page "/category"
-<h3>Category</h3>
 
-@code {
-    
-}
+<h3>Category</h3>
+@code
+{
+   Models.Category category = new Models.Category()
+    {
+        Id=1,
+        Name="Grocery"
+    };
+
+} 
+<br/>
+Id:@category.Id
+<br/>
+Name:@category.Name
+<br/>
