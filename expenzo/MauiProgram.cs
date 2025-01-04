@@ -3,6 +3,7 @@ using MudBlazor.Services;
 using expenzo.Database;
 using expenzo.Services;
 using expenzo.Services.Interfaces;
+
 namespace expenzo
 {
     public static class MauiProgram
@@ -23,8 +24,8 @@ namespace expenzo
             builder.Services.AddSingleton<DatabaseContext>();
             builder.Services.AddSingleton<CategoryDao>();
             builder.Services.AddSingleton<UserDao>();
+            builder.Services.AddSingleton<DebtDao>();
             builder.Services.AddSingleton<IUserService, UserService>();
-            
 
 #if DEBUG
             builder.Services.AddBlazorWebViewDeveloperTools();
@@ -33,11 +34,14 @@ namespace expenzo
 
             var app = builder.Build();
 
-            // Initialize database tables for Category
+            // Initialize database tables
             var categoryDao = app.Services.GetService<CategoryDao>();
             categoryDao?.CreateTable();
             var userDao = app.Services.GetService<UserDao>();
             userDao?.CreateTable();
+            var debtDao = app.Services.GetService<DebtDao>();
+            debtDao?.CreateTable();
+
             return app;
         }
     }

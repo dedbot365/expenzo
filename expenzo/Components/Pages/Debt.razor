@@ -4,9 +4,46 @@
 <button class="btn btn-primary" @onclick="ShowPopup">Add Debt</button>
 <AddDebtPopup IsVisible="isPopupVisible" OnClose="HidePopup" />
 
+<table class="table">
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Amount</th>
+            <th>Taken Date</th>
+            <th>Due Date</th>
+            <th>Source</th>
+            <th>Status</th>
+            <th>Remark</th> <!-- New column -->
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var debt in debts)
+        {
+            <tr>
+                <td>@debt.DebtId</td>
+                <td>@debt.DebtAmount</td>
+                <td>@debt.DebtTakenDate.ToString("MM/dd/yyyy")</td>
+                <td>@debt.DebtDueDate.ToString("MM/dd/yyyy")</td>
+                <td>@debt.DebtSource</td>
+                <td>@(debt.DebtStatus == "PaidDebts" ? "Paid Debts" : "Pending Debt")</td>
+                <td>@debt.Remark</td> <!-- New column -->
+            </tr>
+        }
+    </tbody>
+</table>
+
 @code
 {
     private bool isPopupVisible = false;
+    private List<Models.Debt> debts = new List<Models.Debt>();
+
+    [Inject]
+    private DebtDao DebtDao { get; set; }
+
+    protected override void OnInitialized()
+    {
+        debts = DebtDao.GetDebts();
+    }
 
     private void ShowPopup()
     {
@@ -16,21 +53,6 @@
     private void HidePopup()
     {
         isPopupVisible = false;
+        debts = DebtDao.GetDebts();
     }
-
-    Models.Debt debt = new Models.Debt()
-    {
-        DebtAmount = 5000.00m,
-        DebtTakenDate = DateTime.Now,
-        DebtDueDate = DateTime.Now.AddMonths(6),
-        DebtSource = "Bank Loan"
-    };
 }
-<br/>
-Debt Amount: @debt.DebtAmount
-<br/>
-Debt Taken Date: @debt.DebtTakenDate.ToString("MM/dd/yyyy")
-<br/>
-Debt Due Date: @debt.DebtDueDate.ToString("MM/dd/yyyy")
-<br/>
-Debt Source: @debt.DebtSource
