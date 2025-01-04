@@ -1,8 +1,9 @@
 ﻿@page "/debt"
 
 <h3>Debt</h3>
-<button class="btn btn-primary" @onclick="ShowPopup">Add Debt</button>
-<AddDebtPopup IsVisible="isPopupVisible" OnClose="HidePopup" />
+<button class="btn btn-primary" @onclick="ShowAddDebtPopup">Add Debt</button>
+<AddDebtPopup IsVisible="isAddDebtPopupVisible" OnClose="HideAddDebtPopup" />
+<PayDebtPopup IsVisible="isPayDebtPopupVisible" OnClose="HidePayDebtPopup" SelectedDebt="selectedDebt" />
 
 <table class="table">
     <thead>
@@ -13,7 +14,8 @@
             <th>Due Date</th>
             <th>Source</th>
             <th>Status</th>
-            <th>Remark</th> <!-- New column -->
+            <th>Remark</th>
+            <th>Actions</th>
         </tr>
     </thead>
     <tbody>
@@ -26,7 +28,10 @@
                 <td>@debt.DebtDueDate.ToString("MM/dd/yyyy")</td>
                 <td>@debt.DebtSource</td>
                 <td>@(debt.DebtStatus == "PaidDebts" ? "Paid Debts" : "Pending Debt")</td>
-                <td>@debt.Remark</td> <!-- New column -->
+                <td>@debt.Remark</td>
+                <td>
+                    <button class="btn btn-success" @onclick="() => ShowPayDebtPopup(debt)">Pay Debt</button>
+                </td>
             </tr>
         }
     </tbody>
@@ -34,8 +39,10 @@
 
 @code
 {
-    private bool isPopupVisible = false;
+    private bool isAddDebtPopupVisible = false;
+    private bool isPayDebtPopupVisible = false;
     private List<Models.Debt> debts = new List<Models.Debt>();
+    private Models.Debt selectedDebt;
 
     [Inject]
     private DebtDao DebtDao { get; set; }
@@ -45,14 +52,26 @@
         debts = DebtDao.GetDebts();
     }
 
-    private void ShowPopup()
+    private void ShowAddDebtPopup()
     {
-        isPopupVisible = true;
+        isAddDebtPopupVisible = true;
     }
 
-    private void HidePopup()
+    private void HideAddDebtPopup()
     {
-        isPopupVisible = false;
+        isAddDebtPopupVisible = false;
+        debts = DebtDao.GetDebts();
+    }
+
+    private void ShowPayDebtPopup(Models.Debt debt)
+    {
+        selectedDebt = debt;
+        isPayDebtPopupVisible = true;
+    }
+
+    private void HidePayDebtPopup()
+    {
+        isPayDebtPopupVisible = false;
         debts = DebtDao.GetDebts();
     }
 }

@@ -45,6 +45,17 @@ namespace expenzo.Database
             command.Parameters.AddWithValue("@Remark", debt.Remark);
             command.ExecuteNonQuery();
         }
+        public void UpdateDebt(Debt debt)
+        {
+            using var connection = _context.GetConnection();
+            connection.Open();
+            var command = connection.CreateCommand();
+            command.CommandText = "UPDATE Debts SET DebtAmount = @DebtAmount, DebtStatus = @DebtStatus WHERE DebtId = @DebtId";
+            command.Parameters.AddWithValue("@DebtAmount", debt.DebtAmount);
+            command.Parameters.AddWithValue("@DebtStatus", debt.DebtStatus);
+            command.Parameters.AddWithValue("@DebtId", debt.DebtId);
+            command.ExecuteNonQuery();
+        }
 
         public List<Debt> GetDebts()
         {

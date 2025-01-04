@@ -1,11 +1,12 @@
-﻿@code {
+﻿@page "/add-debt"
+@code {
     [Parameter]
     public bool IsVisible { get; set; }
 
     [Parameter]
     public EventCallback OnClose { get; set; }
 
-    private Models.Debt newDebt = new Models.Debt { DebtTakenDate = DateTime.Now, DebtDueDate = DateTime.Now.AddDays(1) };
+    private Models.Debt newDebt = new Models.Debt();
     private int nextDebtId = 1;
 
     [Inject]
@@ -19,16 +20,13 @@
         // Ensure DebtDueDate is after DebtTakenDate
         if (newDebt.DebtDueDate <= newDebt.DebtTakenDate)
         {
-            newDebt.DebtDueDate = newDebt.DebtTakenDate.AddDays(1);
+            // Handle error
+            return;
         }
 
-        // Add debt to the database
         DebtDao.AddDebt(newDebt);
-
+        newDebt = new Models.Debt(); // Reset the form
         OnClose.InvokeAsync();
-
-        // Reset newDebt for the next entry
-        newDebt = new Models.Debt { DebtId = nextDebtId, DebtTakenDate = DateTime.Now, DebtDueDate = DateTime.Now.AddDays(1) };
     }
 }
 
@@ -38,49 +36,33 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Add New Debt</h5>
+                    <h5 class="modal-title">Add Debt</h5>
                     <button type="button" class="btn-close" aria-label="Close" @onclick="() => OnClose.InvokeAsync()"></button>
                 </div>
                 <div class="modal-body">
                     <div class="mb-3">
-                        <label for="debtAmount" class="form-label">Debt Amount:</label>
+                        <label for="debtAmount" class="form-label">Amount:</label>
                         <input type="number" id="debtAmount" class="form-control" @bind="newDebt.DebtAmount" />
                     </div>
                     <div class="mb-3">
-                        <label for="debtDueDate" class="form-label">Debt Due Date:</label>
+                        <label for="debtTakenDate" class="form-label">Taken Date:</label>
+                        <input type="date" id="debtTakenDate" class="form-control" @bind="newDebt.DebtTakenDate" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="debtDueDate" class="form-label">Due Date:</label>
                         <input type="date" id="debtDueDate" class="form-control" @bind="newDebt.DebtDueDate" />
                     </div>
                     <div class="mb-3">
-                        <label for="debtSource" class="form-label">Debt Source:</label>
-                        <select id="debtSource" class="form-control" @bind="newDebt.DebtSource">
-                            <option value="Bank Loan">Banking Loan</option>
-                            <option value="Friends">Friends</option>
-                            <option value="Family">Family</option>
-                        </select>
+                        <label for="debtSource" class="form-label">Source:</label>
+                        <input type="text" id="debtSource" class="form-control" @bind="newDebt.DebtSource" />
                     </div>
                     <div class="mb-3">
                         <label for="remark" class="form-label">Remark:</label>
-                        <textarea id="remark" class="form-control" @bind="newDebt.Remark"></textarea>
+                        <input type="text" id="remark" class="form-control" @bind="newDebt.Remark" />
                     </div>
-                    <div>
-                        <strong>Id:</strong> @newDebt.DebtId
-                        <br />
-                        <strong>Amount:</strong> @newDebt.DebtAmount
-                        <br />
-                        <strong>Taken Date:</strong> @newDebt.DebtTakenDate.ToString("MM/dd/yyyy")
-                        <br />
-                        <strong>Due Date:</strong> @newDebt.DebtDueDate.ToString("MM/dd/yyyy")
-                        <br />
-                        <strong>Source:</strong> @newDebt.DebtSource
-                        <br />
-                        <strong>Status:</strong> @(newDebt.DebtStatus == "PaidDebts" ? "Paid Debts" : "Pending Debt")
-                        <br />
-                        <strong>Remark:</strong> @newDebt.Remark
+                    <div class="d-flex justify-content-end">
+                        <button class="btn btn-primary" @onclick="AddDebt">Add</button>
                     </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" @onclick="AddDebt">Save</button>
-                    <button type="button" class="btn btn-secondary" @onclick="() => OnClose.InvokeAsync()">Cancel</button>
                 </div>
             </div>
         </div>
