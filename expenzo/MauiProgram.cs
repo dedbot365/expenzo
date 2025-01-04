@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using MudBlazor.Services;
+using expenzo.Database;
 
 namespace expenzo
 {
@@ -18,12 +19,21 @@ namespace expenzo
             builder.Services.AddMauiBlazorWebView();
             builder.Services.AddMudServices();
 
+            builder.Services.AddSingleton<DatabaseContext>();
+            builder.Services.AddSingleton<CategoryDao>();
+
 #if DEBUG
             builder.Services.AddBlazorWebViewDeveloperTools();
-    		builder.Logging.AddDebug();
+            builder.Logging.AddDebug();
 #endif
 
-            return builder.Build();
+            var app = builder.Build();
+
+            // Initialize database tables
+            var categoryDao = app.Services.GetService<CategoryDao>();
+            categoryDao?.CreateTable();
+
+            return app;
         }
     }
 }

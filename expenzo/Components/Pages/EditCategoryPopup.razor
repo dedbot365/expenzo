@@ -1,4 +1,4 @@
-﻿@page "/add-category"
+﻿@page "/edit-category"
 @inject expenzo.Database.CategoryDao CategoryDao
 
 @code {
@@ -8,17 +8,15 @@
     [Parameter]
     public EventCallback OnClose { get; set; }
 
-    private Models.Category newCategory = new Models.Category();
+    [Parameter]
+    public Models.Category CategoryToEdit { get; set; }
 
-    private void AddCategory()
+    private void UpdateCategory()
     {
-        // Add logic to save the new category
-        CategoryDao.AddCategory(newCategory);
+        // Add logic to update the category
+        CategoryDao.UpdateCategory(CategoryToEdit);
 
         OnClose.InvokeAsync();
-
-        // Reset newCategory for the next entry
-        newCategory = new Models.Category();
     }
 }
 
@@ -28,18 +26,18 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Add New Category</h5>
+                    <h5 class="modal-title">Edit Category</h5>
                     <button type="button" class="btn-close" aria-label="Close" @onclick="() => OnClose.InvokeAsync()"></button>
                 </div>
                 <div class="modal-body">
                     <div class="mb-3">
                         <label for="categoryName" class="form-label">Category Name:</label>
-                        <input type="text" class="form-control" id="categoryName" @bind="newCategory.Name">
+                        <input type="text" class="form-control" id="categoryName" @bind="CategoryToEdit.Name">
                     </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" @onclick="() => OnClose.InvokeAsync()">Close</button>
-                    <button type="button" class="btn btn-primary" @onclick="AddCategory">Save changes</button>
+                    <button type="button" class="btn btn-primary" @onclick="UpdateCategory">Save changes</button>
                 </div>
             </div>
         </div>

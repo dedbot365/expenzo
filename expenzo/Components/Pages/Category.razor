@@ -1,47 +1,72 @@
-﻿@* @page "/category"
-
-Id:@category.Id
-<br/>
-Name:@category.Name
+﻿@page "/category"
+@inject expenzo.Database.CategoryDao CategoryDao
 
 <h3>Category</h3>
+<button class="btn btn-primary" @onclick="ShowAddPopup">Add Category</button>
+<AddCategoryPopup IsVisible="isAddPopupVisible" OnClose="HideAddPopup" />
+<EditCategoryPopup IsVisible="isEditPopupVisible" OnClose="HideEditPopup" CategoryToEdit="categoryToEdit" />
+
+<table class="table table-striped mt-3">
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Name</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var category in categories)
+        {
+            <tr>
+                <td>@category.Id</td>
+                <td>@category.Name</td>
+                <td>
+                    <button class="btn btn-secondary" @onclick="() => ShowEditPopup(category)">Edit</button>
+                    <button class="btn btn-danger" @onclick="() => DeleteCategory(category.Id)">Delete</button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
 @code
 {
-   Models.Category category = new Models.Category()
+    private bool isAddPopupVisible = false;
+    private bool isEditPopupVisible = false;
+    private List<Models.Category> categories = new List<Models.Category>();
+    private Models.Category categoryToEdit = new Models.Category();
+
+    protected override async Task OnInitializedAsync()
     {
-        Id=1,
-        Name="Grocery"
-    };
-
-} *@
-@page "/category"
-
-<h3>Category</h3>
-<button class="btn btn-primary" @onclick="ShowPopup">Add Category</button>
-<AddCategoryPopup IsVisible="isPopupVisible" OnClose="HidePopup" />
-
-@code
-{
-    private bool isPopupVisible = false;
-
-    private void ShowPopup()
-    {
-        isPopupVisible = true;
+        categories = await Task.Run(() => CategoryDao.GetCategories());
     }
 
-    private void HidePopup()
+    private void ShowAddPopup()
     {
-        isPopupVisible = false;
+        isAddPopupVisible = true;
     }
 
-    Models.Category category = new Models.Category()
+    private void HideAddPopup()
     {
-        Id = 1,
-        Name = "Grocery"
-    };
+        isAddPopupVisible = false;
+        categories = CategoryDao.GetCategories();
+    }
+
+    private void ShowEditPopup(Models.Category category)
+    {
+        categoryToEdit = category;
+        isEditPopupVisible = true;
+    }
+
+    private void HideEditPopup()
+    {
+        isEditPopupVisible = false;
+        categories = CategoryDao.GetCategories();
+    }
+
+    private void DeleteCategory(int categoryId)
+    {
+        CategoryDao.DeleteCategory(categoryId);
+        categories = CategoryDao.GetCategories();
+    }
 }
-<br/>
-Id:@category.Id
-<br/>
-Name:@category.Name
-<br/>
