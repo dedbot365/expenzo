@@ -25,6 +25,7 @@ namespace expenzo
             builder.Services.AddSingleton<CategoryDao>();
             builder.Services.AddSingleton<UserDao>();
             builder.Services.AddSingleton<DebtDao>();
+            builder.Services.AddSingleton<TransactionDao>();
             builder.Services.AddSingleton<IUserService, UserService>();
 
 #if DEBUG
@@ -41,6 +42,8 @@ namespace expenzo
             userDao?.CreateTable();
             var debtDao = app.Services.GetService<DebtDao>();
             debtDao?.CreateTable();
+            var transactionDao = app.Services.GetService<TransactionDao>();
+            transactionDao?.CreateTable();
 
             return app;
         }

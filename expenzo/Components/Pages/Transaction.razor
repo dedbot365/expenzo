@@ -1,45 +1,93 @@
 ﻿@page "/transaction"
+@using expenzo.Database
 
 <h3>Transaction</h3>
-<button class="btn btn-primary" @onclick="ShowPopup">Add Transaction</button>
-<AddTransactionPopup IsVisible="isPopupVisible" OnClose="HidePopup" />
+<button class="btn btn-primary" @onclick="ShowAddPopup">Add Transaction</button>
+<AddTransactionPopup IsVisible="isAddPopupVisible" OnClose="HideAddPopup" />
+<EditTransactionPopup IsVisible="isEditPopupVisible" OnClose="HideEditPopup" TransactionToEdit="transactionToEdit" />
+<DeleteTransactionPopup IsVisible="isDeletePopupVisible" OnClose="HideDeletePopup" TransactionId="transactionToDeleteId" />
 
-@code
-{
-    private bool isPopupVisible = false;
+<table class="table table-striped mt-3">
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Title</th>
+            <th>Amount</th>
+            <th>Type</th>
+            <th>Category</th>
+            <th>Date</th>
+            <th>Remarks</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var transaction in transactions)
+        {
+            <tr>
+                <td>@transaction.TransactionId</td>
+                <td>@transaction.Title</td>
+                <td>@transaction.Amount</td>
+                <td>@transaction.Type</td>
+                <td>@transaction.CategoryName</td>
+                <td>@transaction.TransactionDate.ToString("MM/dd/yyyy")</td>
+                <td>@transaction.Remarks</td>
+                <td>
+                    <button class="btn btn-secondary" @onclick="() => ShowEditPopup(transaction)">Edit</button>
+                    <button class="btn btn-danger" @onclick="() => ShowDeletePopup(transaction.TransactionId)">Delete</button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
 
-    private void ShowPopup()
+@code {
+    private bool isAddPopupVisible = false;
+    private bool isEditPopupVisible = false;
+    private bool isDeletePopupVisible = false;
+    private List<Models.Transaction> transactions = new List<Models.Transaction>();
+    private Models.Transaction transactionToEdit = new Models.Transaction();
+    private int transactionToDeleteId;
+
+    [Inject]
+    private TransactionDao TransactionDao { get; set; }
+
+    protected override void OnInitialized()
     {
-        isPopupVisible = true;
+        transactions = TransactionDao.GetTransactions();
     }
 
-    private void HidePopup()
+    private void ShowAddPopup()
     {
-        isPopupVisible = false;
+        isAddPopupVisible = true;
     }
 
-    Models.Transaction transaction = new Models.Transaction()
+    private void HideAddPopup()
     {
-        TransactionId = 1,
-        Amount = 100.50m,
-        Title = "Grocery Shopping",
-        Type = "Expense",
-        CategoryName = "Grocery",
-        TransactionDate = DateTime.Now,
-        Remarks = "Bought groceries for the week"
-    };
+        isAddPopupVisible = false;
+        transactions = TransactionDao.GetTransactions();
+    }
+
+    private void ShowEditPopup(Models.Transaction transaction)
+    {
+        transactionToEdit = transaction;
+        isEditPopupVisible = true;
+    }
+
+    private void HideEditPopup()
+    {
+        isEditPopupVisible = false;
+        transactions = TransactionDao.GetTransactions();
+    }
+
+    private void ShowDeletePopup(int transactionId)
+    {
+        transactionToDeleteId = transactionId;
+        isDeletePopupVisible = true;
+    }
+
+    private void HideDeletePopup()
+    {
+        isDeletePopupVisible = false;
+        transactions = TransactionDao.GetTransactions();
+    }
 }
-<br/>
-Transaction Id: @transaction.TransactionId
-<br/>
-Amount: @transaction.Amount
-<br/>
-Title: @transaction.Title
-<br/>
-Type: @transaction.Type
-<br/>
-Category: @transaction.CategoryName
-<br/>
-Date: @transaction.TransactionDate.ToString("MM/dd/yyyy")
-<br/>
-Remarks: @transaction.Remarks

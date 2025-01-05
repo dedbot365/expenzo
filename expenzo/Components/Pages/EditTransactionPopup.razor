@@ -1,4 +1,4 @@
-﻿@page "/add-transaction"
+﻿@page "/edit-transaction"
 @inject TransactionDao TransactionDao
 @inject CategoryDao CategoryDao
 
@@ -9,28 +9,28 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Add New Transaction</h5>
+                    <h5 class="modal-title">Edit Transaction</h5>
                     <button type="button" class="btn-close" aria-label="Close" @onclick="() => OnClose.InvokeAsync()"></button>
                 </div>
                 <div class="modal-body">
                     <div class="mb-3">
                         <label for="transactionTitle" class="form-label">Title:</label>
-                        <input type="text" id="transactionTitle" class="form-control" @bind="newTransaction.Title" />
+                        <input type="text" id="transactionTitle" class="form-control" @bind="TransactionToEdit.Title" />
                     </div>
                     <div class="mb-3">
                         <label for="transactionAmount" class="form-label">Amount:</label>
-                        <input type="number" id="transactionAmount" class="form-control" @bind="newTransaction.Amount" />
+                        <input type="number" id="transactionAmount" class="form-control" @bind="TransactionToEdit.Amount" />
                     </div>
                     <div class="mb-3">
                         <label for="transactionType" class="form-label">Type:</label>
-                        <select id="transactionType" class="form-control" @bind="newTransaction.Type">
+                        <select id="transactionType" class="form-control" @bind="TransactionToEdit.Type">
                             <option value="Income">Income</option>
                             <option value="Expense">Expense</option>
                         </select>
                     </div>
                     <div class="mb-3">
                         <label for="transactionCategory" class="form-label">Category:</label>
-                        <select id="transactionCategory" class="form-control" @bind="newTransaction.CategoryName">
+                        <select id="transactionCategory" class="form-control" @bind="TransactionToEdit.CategoryName">
                             @foreach (var category in categories)
                             {
                                 <option value="@category.Name">@category.Name</option>
@@ -39,15 +39,15 @@
                     </div>
                     <div class="mb-3">
                         <label for="transactionDate" class="form-label">Date:</label>
-                        <input type="date" id="transactionDate" class="form-control" @bind="newTransaction.TransactionDate" />
+                        <input type="date" id="transactionDate" class="form-control" @bind="TransactionToEdit.TransactionDate" />
                     </div>
                     <div class="mb-3">
                         <label for="transactionRemarks" class="form-label">Remarks:</label>
-                        <textarea id="transactionRemarks" class="form-control" @bind="newTransaction.Remarks"></textarea>
+                        <textarea id="transactionRemarks" class="form-control" @bind="TransactionToEdit.Remarks"></textarea>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" @onclick="AddTransaction">Save</button>
+                    <button type="button" class="btn btn-primary" @onclick="UpdateTransaction">Save</button>
                     <button type="button" class="btn btn-secondary" @onclick="() => OnClose.InvokeAsync()">Cancel</button>
                 </div>
             </div>
@@ -62,8 +62,9 @@
     [Parameter]
     public EventCallback OnClose { get; set; }
 
-    private Models.Transaction newTransaction = new Models.Transaction { TransactionDate = DateTime.Now };
-    private int nextTransactionId = 1;
+    [Parameter]
+    public Models.Transaction TransactionToEdit { get; set; }
+
     private List<Models.Category> categories = new List<Models.Category>();
 
     protected override void OnInitialized()
@@ -71,13 +72,9 @@
         categories = CategoryDao.GetCategories();
     }
 
-    private void AddTransaction()
+    private void UpdateTransaction()
     {
-        newTransaction.TransactionId = nextTransactionId++;
-        TransactionDao.AddTransaction(newTransaction);
+        TransactionDao.UpdateTransaction(TransactionToEdit);
         OnClose.InvokeAsync();
-
-        // Reset newTransaction for the next entry
-        newTransaction = new Models.Transaction { TransactionId = nextTransactionId, TransactionDate = DateTime.Now };
     }
 }
