@@ -17,7 +17,7 @@
                     </div>
                     <div class="form-group">
                         <label for="debtTakenDate" style="margin-bottom: 5px;">Taken Date</label>
-                        <input type="date" @bind="newDebt.DebtTakenDate" class="form-control" id="debtTakenDate" />
+                        <input type="date" @bind="newDebt.DebtTakenDate" class="form-control" id="debtTakenDate" readonly />
                     </div>
                     <div class="form-group">
                         <label for="debtDueDate" style="margin-bottom: 5px;">Due Date</label>
@@ -31,13 +31,6 @@
                             <option value="Friend">Friend</option>
                             <option value="Family">Family</option>
                             <option value="Other">Other</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="debtStatus" style="margin-bottom: 5px;">Status</label>
-                        <select @bind="newDebt.DebtStatus" class="form-control" id="debtStatus">
-                            <option value="PendingDebt">Pending Debt</option>
-                            <option value="PaidDebts">Paid Debts</option>
                         </select>
                     </div>
                     <div class="form-group">
@@ -61,21 +54,38 @@
     [Parameter]
     public EventCallback OnClose { get; set; }
 
-    private Models.Debt newDebt = new Models.Debt();
+    private Models.Debt newDebt;
     private int nextDebtId = 1;
 
     [Inject]
     private DebtDao DebtDao { get; set; }
 
+    protected override void OnParametersSet()
+    {
+        if (IsVisible)
+        {
+            ResetNewDebt();
+        }
+    }
+
+    private void ResetNewDebt()
+    {
+        newDebt = new Models.Debt
+        {
+            DebtTakenDate = DateTime.Now.Date,
+            DebtDueDate = DateTime.Now.Date.AddDays(1) 
+        };
+    }
+
     private void AddDebt()
     {
-        // Automatically assign the Id to the new debt
-        newDebt.DebtId = nextDebtId++;
         
-        // Ensure DebtDueDate is after DebtTakenDate
-        if (newDebt.DebtDueDate <= newDebt.DebtTakenDate)
+        newDebt.DebtId = nextDebtId++;
+
+        
+        if (newDebt.DebtDueDate <= DateTime.Now.Date)
         {
-            // Handle error
+            
             return;
         }
 
