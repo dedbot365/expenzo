@@ -9,11 +9,11 @@ namespace expenzo.Database
 
         public DatabaseContext()
         {
-            var folderPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "expenzo");
+            // This will create an database directory in the solution folder that will be utilized to store the database file
+            var folderPath = Path.Combine(Directory.GetCurrentDirectory(), "database"); 
             Directory.CreateDirectory(folderPath);
             _databasePath = Path.Combine(folderPath, "expenzo.db");
         }
-
 
         public SqliteConnection GetConnection()
         {
