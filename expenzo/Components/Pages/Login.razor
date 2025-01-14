@@ -4,6 +4,7 @@
 @inject IUserService UserService
 @inject NavigationManager Navigation
 @inject AuthenticationStateService authStateService
+@inject EncryptionService EncryptionService
 
 <h3>Login</h3>
 
@@ -51,7 +52,7 @@
             return;
         }
 
-        var user = await UserService.LoginUser(loginModel.UserName, loginModel.Password);
+        var user = await UserService.LoginUser(loginModel.UserName, EncryptionService.Encrypt(loginModel.Password));
         if (user != null)
         {
             if (user.Currency == loginModel.Currency)

@@ -3,6 +3,7 @@
 @using expenzo.Models
 @inject IUserService UserService
 @inject NavigationManager Navigation
+@inject EncryptionService EncryptionService
 
 <h3>Register</h3>
 
@@ -41,6 +42,7 @@
 @code {
     private async Task HandleRegistration()
     {
+        newUser.Password = EncryptionService.Encrypt(newUser.Password);
         if (await UserService.RegisterUser(newUser))
         {
             Navigation.NavigateTo("/");
