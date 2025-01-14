@@ -19,6 +19,17 @@
         <label for="password" class="form-label">Password</label>
         <InputText id="password" type="password" class="form-control" @bind-Value="loginModel.Password" />
     </div>
+    <div class="mb-3">
+        <label for="currency" class="form-label">Currency</label>
+        <InputSelect id="currency" class="form-control" @bind-Value="loginModel.Currency">
+            <option value="">Select Currency</option>
+            <option value="NPR">NPR</option>
+            <option value="INR">INR</option>              
+            <option value="USD">USD</option>                      
+            <option value="EUR">EUR</option>
+            <option value="GBP">GBP</option>
+        </InputSelect>
+    </div>
     <button type="submit" class="btn btn-primary">Login</button>
     <button type="button" class="btn btn-secondary" @onclick="NavigateToRegister">Register</button>
 </EditForm>
@@ -34,11 +45,24 @@
 
     private async Task HandleLogin()
     {
+        if (string.IsNullOrEmpty(loginModel.UserName) || string.IsNullOrEmpty(loginModel.Password) || string.IsNullOrEmpty(loginModel.Currency))
+        {
+            errorMessage = "All fields are required.";
+            return;
+        }
+
         var user = await UserService.LoginUser(loginModel.UserName, loginModel.Password);
         if (user != null)
         {
-            authStateService.SetAuthenticatedUser(user);
-            Navigation.NavigateTo("/home");
+            if (user.Currency == loginModel.Currency)
+            {
+                authStateService.SetAuthenticatedUser(user);
+                Navigation.NavigateTo("/home");
+            }
+            else
+            {
+                errorMessage = "Invalid currency type. Only one type of currency is allowed per account.";
+            }
         }
         else
         {
