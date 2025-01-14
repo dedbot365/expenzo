@@ -8,8 +8,7 @@
     <button class="btn btn-primary" @onclick="ShowAddPopup">Add Category</button>
 </div>
 
-<AddCategoryPopup IsVisible="isAddPopupVisible" OnClose="HideAddPopup" />
-<EditCategoryPopup IsVisible="isEditPopupVisible" OnClose="HideEditPopup" CategoryToEdit="categoryToEdit" />
+<CategoryPopup IsVisible="isPopupVisible" OnClose="HidePopup" Category="selectedCategory" IsEditMode="isEditMode" IsDeleteMode="isDeleteMode" />
 
 <table class="table table-striped mt-3">
     <thead>
@@ -27,7 +26,7 @@
                 <td>@category.Name</td>
                 <td>
                     <button class="btn btn-secondary" @onclick="() => ShowEditPopup(category)">Edit</button>
-                    <button class="btn btn-danger" @onclick="() => DeleteCategory(category.Id)">Delete</button>
+                    <button class="btn btn-danger" @onclick="() => ShowDeletePopup(category)">Delete</button>
                 </td>
             </tr>
         }
@@ -36,11 +35,12 @@
 
 @code
 {
-    private bool isAddPopupVisible = false;
-    private bool isEditPopupVisible = false;
+    private bool isPopupVisible = false;
+    private bool isEditMode = false;
+    private bool isDeleteMode = false;
     private List<Models.Category> categories = new List<Models.Category>();
     private List<Models.Category> filteredCategories = new List<Models.Category>();
-    private Models.Category categoryToEdit = new Models.Category();
+    private Models.Category selectedCategory = new Models.Category();
     private string searchTerm = string.Empty;
 
     protected override async Task OnInitializedAsync()
@@ -51,32 +51,31 @@
 
     private void ShowAddPopup()
     {
-        isAddPopupVisible = true;
-    }
-
-    private void HideAddPopup()
-    {
-        isAddPopupVisible = false;
-        categories = CategoryDao.GetCategories();
-        FilterCategories();
+        selectedCategory = new Models.Category();
+        isEditMode = false;
+        isDeleteMode = false;
+        isPopupVisible = true;
     }
 
     private void ShowEditPopup(Models.Category category)
     {
-        categoryToEdit = category;
-        isEditPopupVisible = true;
+        selectedCategory = category;
+        isEditMode = true;
+        isDeleteMode = false;
+        isPopupVisible = true;
     }
 
-    private void HideEditPopup()
+    private void ShowDeletePopup(Models.Category category)
     {
-        isEditPopupVisible = false;
-        categories = CategoryDao.GetCategories();
-        FilterCategories();
+        selectedCategory = category;
+        isEditMode = false;
+        isDeleteMode = true;
+        isPopupVisible = true;
     }
 
-    private void DeleteCategory(int categoryId)
+    private void HidePopup()
     {
-        CategoryDao.DeleteCategory(categoryId);
+        isPopupVisible = false;
         categories = CategoryDao.GetCategories();
         FilterCategories();
     }
