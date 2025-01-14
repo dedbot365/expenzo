@@ -1,6 +1,6 @@
 ﻿@page "/register"
-@using expenzo.Services.Interfaces;
-@using expenzo.Models;
+@using expenzo.Services
+@using expenzo.Models
 @inject IUserService UserService
 @inject NavigationManager Navigation
 
@@ -21,9 +21,9 @@
     <div class="mb-3">
         <label for="currency" class="form-label">Currency</label>
         <InputSelect id="currency" class="form-control" @bind-Value="newUser.Currency">
+            <option value="NPR">NPR</option>
             <option value="INR">INR</option>
             <option value="USD">USD</option>
-            <option value="NPR">NPR</option>
             <option value="EUR">EUR</option>
             <option value="GBP">GBP</option>
         </InputSelect>

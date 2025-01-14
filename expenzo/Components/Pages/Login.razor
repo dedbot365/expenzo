@@ -1,8 +1,9 @@
-﻿@page "/login"
-@using expenzo.Services.Interfaces;
-@using expenzo.Models;
+﻿@page "/"
+@using expenzo.Services
+@using expenzo.Models
 @inject IUserService UserService
 @inject NavigationManager Navigation
+@inject AuthenticationStateService authStateService
 
 <h3>Login</h3>
 
@@ -36,8 +37,8 @@
         var user = await UserService.LoginUser(loginModel.UserName, loginModel.Password);
         if (user != null)
         {
-            // Store user information in session or local storage
-            Navigation.NavigateTo("/dashboard");
+            authStateService.SetAuthenticatedUser(user);
+            Navigation.NavigateTo("/home");
         }
         else
         {

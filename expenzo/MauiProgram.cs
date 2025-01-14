@@ -27,6 +27,7 @@ namespace expenzo
             builder.Services.AddSingleton<DebtDao>();
             builder.Services.AddSingleton<TransactionDao>();
             builder.Services.AddSingleton<IUserService, UserService>();
+            builder.Services.AddSingleton<AuthenticationStateService>();
 
 #if DEBUG
             builder.Services.AddBlazorWebViewDeveloperTools();
