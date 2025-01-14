@@ -3,14 +3,16 @@
 
 <h3>Transaction</h3>
 <div class="d-flex align-items-center mb-3">
-    <input type="text" class="form-control me-2" style="width: 60%;" placeholder="Search by Title, Type, or Remarks" @bind="searchTerm" @bind:event="oninput" />
+    <input type="text" class="form-control me-2" style="width: 60%;" placeholder="Search by Title or Remarks" @bind="searchTerm" @bind:event="oninput" />
     <button class="btn btn-secondary me-2" @onclick="SearchTransactions">Search</button>
+    <button class="btn btn-secondary me-2" @onclick="ShowFilterPopup">Filter Transactions</button>
     <button class="btn btn-primary" @onclick="ShowAddPopup">Add Transaction</button>
 </div>
 
 <AddTransactionPopup IsVisible="isAddPopupVisible" OnClose="HideAddPopup" />
 <EditTransactionPopup IsVisible="isEditPopupVisible" OnClose="HideEditPopup" TransactionToEdit="transactionToEdit" />
 <DeleteTransactionPopup IsVisible="isDeletePopupVisible" OnClose="HideDeletePopup" TransactionId="transactionToDeleteId" />
+<FilterTransactionPopup IsVisible="isFilterPopupVisible" OnClose="HideFilterPopup" OnFilter="ApplyFilter" />
 
 <table class="table table-striped mt-3">
     <thead>
@@ -49,6 +51,7 @@
     private bool isAddPopupVisible = false;
     private bool isEditPopupVisible = false;
     private bool isDeletePopupVisible = false;
+    private bool isFilterPopupVisible = false;
     private List<Models.Transaction> transactions = new List<Models.Transaction>();
     private List<Models.Transaction> filteredTransactions = new List<Models.Transaction>();
     private Models.Transaction transactionToEdit = new Models.Transaction();
@@ -102,15 +105,32 @@
         ApplyFilter();
     }
 
+    private void ShowFilterPopup()
+    {
+        isFilterPopupVisible = true;
+    }
+
+    private void HideFilterPopup()
+    {
+        isFilterPopupVisible = false;
+    }
+
     private void SearchTransactions()
     {
         ApplyFilter();
     }
 
-    private void ApplyFilter()
+    private void ApplyFilter(List<Models.Transaction> filteredTransactions = null)
     {
-        filteredTransactions = transactions.Where(t =>
-            (string.IsNullOrEmpty(searchTerm) || t.Title.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) || t.Type.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) || t.Remarks.Contains(searchTerm, StringComparison.OrdinalIgnoreCase))
-        ).ToList();
+        if (filteredTransactions != null)
+        {
+            this.filteredTransactions = filteredTransactions;
+        }
+        else
+        {
+            this.filteredTransactions = transactions.Where(t =>
+                (string.IsNullOrEmpty(searchTerm) || t.Title.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) || t.Remarks.Contains(searchTerm, StringComparison.OrdinalIgnoreCase))
+            ).ToList();
+        }
     }
 }

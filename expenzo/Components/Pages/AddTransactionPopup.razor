@@ -13,42 +13,54 @@
                     <button type="button" class="btn-close" aria-label="Close" @onclick="() => OnClose.InvokeAsync()"></button>
                 </div>
                 <div class="modal-body">
-                    <div class="mb-3">
-                        <label for="transactionTitle" class="form-label">Title:</label>
-                        <input type="text" id="transactionTitle" class="form-control" @bind="newTransaction.Title" />
-                    </div>
-                    <div class="mb-3">
-                        <label for="transactionAmount" class="form-label">Amount:</label>
-                        <input type="number" id="transactionAmount" class="form-control" @bind="newTransaction.Amount" />
-                    </div>
-                    <div class="mb-3">
-                        <label for="transactionType" class="form-label">Type:</label>
-                        <select id="transactionType" class="form-control" @bind="newTransaction.Type">
-                            <option value="Income">Income</option>
-                            <option value="Expense">Expense</option>
-                        </select>
-                    </div>
-                    <div class="mb-3">
-                        <label for="transactionCategory" class="form-label">Category:</label>
-                        <select id="transactionCategory" class="form-control" @bind="newTransaction.CategoryName">
-                            @foreach (var category in categories)
-                            {
-                                <option value="@category.Name">@category.Name</option>
-                            }
-                        </select>
-                    </div>
-                    <div class="mb-3">
-                        <label for="transactionDate" class="form-label">Date:</label>
-                        <input type="date" id="transactionDate" class="form-control" @bind="newTransaction.TransactionDate" />
-                    </div>
-                    <div class="mb-3">
-                        <label for="transactionRemarks" class="form-label">Remarks:</label>
-                        <textarea id="transactionRemarks" class="form-control" @bind="newTransaction.Remarks"></textarea>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" @onclick="AddTransaction">Save</button>
-                    <button type="button" class="btn btn-secondary" @onclick="() => OnClose.InvokeAsync()">Cancel</button>
+                    <EditForm Model="newTransaction" OnValidSubmit="AddTransaction">
+                        <DataAnnotationsValidator />
+                        <ValidationSummary />
+
+                        <div class="mb-3">
+                            <label for="transactionTitle" class="form-label">Title:</label>
+                            <InputText id="transactionTitle" class="form-control" @bind-Value="newTransaction.Title" />
+                            <ValidationMessage For="@(() => newTransaction.Title)" />
+                        </div>
+                        <div class="mb-3">
+                            <label for="transactionAmount" class="form-label">Amount:</label>
+                            <InputNumber id="transactionAmount" class="form-control" @bind-Value="newTransaction.Amount" />
+                            <ValidationMessage For="@(() => newTransaction.Amount)" />
+                        </div>
+                       <div class="mb-3">
+                            <label for="transactionType" class="form-label">Type:</label>
+                            <InputSelect id="transactionType" class="form-control" @bind-Value="newTransaction.Type">
+                                <option value="" disabled selected>Select the Transaction Type</option>
+                                <option value="Income">Income</option>
+                                <option value="Expense">Expense</option>
+                            </InputSelect>
+                            <ValidationMessage For="@(() => newTransaction.Type)" />
+                        </div>
+                        <div class="mb-3">
+                            <label for="transactionCategory" class="form-label">Category:</label>
+                            <InputSelect id="transactionCategory" class="form-control" @bind-Value="newTransaction.CategoryName">
+                                <option value="" disabled selected>Select the Transaction Category</option>
+                                @foreach (var category in categories)
+                                {
+                                    <option value="@category.Name">@category.Name</option>
+                                }
+                            </InputSelect>
+                            <ValidationMessage For="@(() => newTransaction.CategoryName)" />
+                        </div>
+                        <div class="mb-3">
+                            <label for="transactionDate" class="form-label">Date:</label>
+                            <InputDate id="transactionDate" class="form-control" @bind-Value="newTransaction.TransactionDate" />
+                            <ValidationMessage For="@(() => newTransaction.TransactionDate)" />
+                        </div>
+                        <div class="mb-3">
+                            <label for="transactionRemarks" class="form-label">Remarks:</label>
+                            <InputTextArea id="transactionRemarks" class="form-control" @bind-Value="newTransaction.Remarks" />
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" @onclick="() => OnClose.InvokeAsync()">Cancel</button>
+                            <button type="submit" class="btn btn-primary">Save Changes</button>
+                        </div>
+                    </EditForm>
                 </div>
             </div>
         </div>
@@ -63,7 +75,6 @@
     public EventCallback OnClose { get; set; }
 
     private Models.Transaction newTransaction = new Models.Transaction { TransactionDate = DateTime.Now };
-    private int nextTransactionId = 1;
     private List<Models.Category> categories = new List<Models.Category>();
 
     protected override void OnInitialized()
@@ -73,11 +84,8 @@
 
     private void AddTransaction()
     {
-        newTransaction.TransactionId = nextTransactionId++;
         TransactionDao.AddTransaction(newTransaction);
         OnClose.InvokeAsync();
-
-        // Reset newTransaction for the next entry
-        newTransaction = new Models.Transaction { TransactionId = nextTransactionId, TransactionDate = DateTime.Now };
+        newTransaction = new Models.Transaction { TransactionDate = DateTime.Now };
     }
 }

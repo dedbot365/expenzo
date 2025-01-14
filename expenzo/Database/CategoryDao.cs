@@ -24,6 +24,26 @@ namespace expenzo.Database
                     Name TEXT NOT NULL
                 )";
             command.ExecuteNonQuery();
+
+            // Insert default categories if they do not exist
+            var defaultCategories = new List<string>
+            {
+                "Yearly", "Monthly", "Food", "Drinks", "Clothes", "Gadgets", "Miscellaneous", "Fuel", "Rent", "EMI", "Party"
+            };
+
+            foreach (var categoryName in defaultCategories)
+            {
+                command.CommandText = "SELECT COUNT(*) FROM Categories WHERE Name = @Name";
+                command.Parameters.Clear();
+                command.Parameters.AddWithValue("@Name", categoryName);
+                var count = (long)command.ExecuteScalar();
+
+                if (count == 0)
+                {
+                    command.CommandText = "INSERT INTO Categories (Name) VALUES (@Name)";
+                    command.ExecuteNonQuery();
+                }
+            }
         }
 
         public void AddCategory(Category category)

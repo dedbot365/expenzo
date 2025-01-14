@@ -8,7 +8,9 @@
     <button class="btn btn-primary" @onclick="ShowAddPopup">Add Category</button>
 </div>
 
-<CategoryPopup IsVisible="isPopupVisible" OnClose="HidePopup" Category="selectedCategory" IsEditMode="isEditMode" IsDeleteMode="isDeleteMode" />
+<AddCategoryPopup IsVisible="isAddPopupVisible" OnClose="HideAddPopup" Category="selectedCategory" />
+<EditCategoryPopup IsVisible="isEditPopupVisible" OnClose="HideEditPopup" Category="selectedCategory" />
+<DeleteCategoryPopup IsVisible="isDeletePopupVisible" OnClose="HideDeletePopup" Category="selectedCategory" />
 
 <table class="table table-striped mt-3">
     <thead>
@@ -35,9 +37,9 @@
 
 @code
 {
-    private bool isPopupVisible = false;
-    private bool isEditMode = false;
-    private bool isDeleteMode = false;
+    private bool isAddPopupVisible = false;
+    private bool isEditPopupVisible = false;
+    private bool isDeletePopupVisible = false;
     private List<Models.Category> categories = new List<Models.Category>();
     private List<Models.Category> filteredCategories = new List<Models.Category>();
     private Models.Category selectedCategory = new Models.Category();
@@ -52,30 +54,38 @@
     private void ShowAddPopup()
     {
         selectedCategory = new Models.Category();
-        isEditMode = false;
-        isDeleteMode = false;
-        isPopupVisible = true;
+        isAddPopupVisible = true;
     }
 
     private void ShowEditPopup(Models.Category category)
     {
         selectedCategory = category;
-        isEditMode = true;
-        isDeleteMode = false;
-        isPopupVisible = true;
+        isEditPopupVisible = true;
     }
 
     private void ShowDeletePopup(Models.Category category)
     {
         selectedCategory = category;
-        isEditMode = false;
-        isDeleteMode = true;
-        isPopupVisible = true;
+        isDeletePopupVisible = true;
     }
 
-    private void HidePopup()
+    private void HideAddPopup()
     {
-        isPopupVisible = false;
+        isAddPopupVisible = false;
+        categories = CategoryDao.GetCategories();
+        FilterCategories();
+    }
+
+    private void HideEditPopup()
+    {
+        isEditPopupVisible = false;
+        categories = CategoryDao.GetCategories();
+        FilterCategories();
+    }
+
+    private void HideDeletePopup()
+    {
+        isDeletePopupVisible = false;
         categories = CategoryDao.GetCategories();
         FilterCategories();
     }
