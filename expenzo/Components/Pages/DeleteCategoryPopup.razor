@@ -1,5 +1,7 @@
 ﻿@page "/delete-category-popup"
 
+@inject ICategoryService CategoryService
+
 @code {
     [Parameter]
     public bool IsVisible { get; set; }
@@ -12,7 +14,7 @@
 
     private void ConfirmDelete()
     {
-        CategoryDao.DeleteCategory(Category.Id);
+        CategoryService.DeleteCategory(Category.Id);
         OnClose.InvokeAsync();
     }
 }
