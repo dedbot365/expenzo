@@ -27,6 +27,7 @@ namespace expenzo
             builder.Services.AddSingleton<DebtDao>();
             builder.Services.AddSingleton<TransactionDao>();
             builder.Services.AddSingleton<IUserService, UserService>();
+            builder.Services.AddSingleton<ICategoryService, CategoryService>();
             builder.Services.AddSingleton<AuthenticationStateService>();
             builder.Services.AddSingleton<EncryptionService>();
 
@@ -38,8 +39,8 @@ namespace expenzo
             var app = builder.Build();
 
             // Initialize database tables
-            var categoryDao = app.Services.GetService<CategoryDao>();
-            categoryDao?.CreateTable();
+            var categoryService = app.Services.GetService<ICategoryService>();
+            categoryService?.CreateTable();
             var userDao = app.Services.GetService<UserDao>();
             userDao?.CreateTable();
             var debtDao = app.Services.GetService<DebtDao>();

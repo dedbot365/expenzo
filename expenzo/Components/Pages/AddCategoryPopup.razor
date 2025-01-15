@@ -1,5 +1,7 @@
 ﻿@page "/add-category-popup"
 
+@inject ICategoryService CategoryService
+
 @code {
     [Parameter]
     public bool IsVisible { get; set; }
@@ -20,7 +22,7 @@
             return;
         }
 
-        CategoryDao.AddCategory(Category);
+        CategoryService.AddCategory(Category);
         OnClose.InvokeAsync();
         errorMessage = string.Empty;
     }
