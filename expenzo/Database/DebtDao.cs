@@ -99,5 +99,15 @@ namespace expenzo.Database
             var result = command.ExecuteScalar();
             return result != DBNull.Value ? Convert.ToDecimal(result) : 0;
         }
+
+        public decimal GetTotalPaidAmount()
+        {
+            using var connection = _context.GetConnection();
+            connection.Open();
+            var command = connection.CreateCommand();
+            command.CommandText = "SELECT SUM(PaidAmount) FROM Debts";
+            var result = command.ExecuteScalar();
+            return result != DBNull.Value ? Convert.ToDecimal(result) : 0;
+        }
     }
 }

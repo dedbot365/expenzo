@@ -4,10 +4,10 @@
 
 <h3>Dashboard</h3>
 <style>
-        .bg-skyblue {
-            background-color: navy;
-        }
-    </style>
+    .bg-skyblue {
+        background-color: navy;
+    }
+</style>
 
 <div class="row">
     <div class="col-md-4">
@@ -17,26 +17,30 @@
         </div>
     </div>
     <div class="col-md-4">
-    <div class="dashboard-card bg-skyblue text-white text-center">
-        <h5>Income</h5>
-        <h2>@totalIncome</h2>
+        <div class="dashboard-card bg-skyblue text-white text-center">
+            <h5>Income</h5>
+            <h2>@totalIncome</h2>
+        </div>
     </div>
-    </div>
-
-    
     <div class="col-md-4">
         <div class="dashboard-card bg-danger text-white text-center">
             <h5>Expense</h5>
             <h2>@totalExpense</h2>
         </div>
     </div>
-
     <div class="col-md-4">
-        <div class="dashboard-card bg-danger text-white text-center">
+        <div class="dashboard-card bg-info text-white text-center">
+            <h5>Paid Debts</h5>
+            <h2>@totalPaidAmount</h2>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="dashboard-card bg-warning text-white text-center">
             <h5>Pending Debts</h5>
             <h2>@remainingDebt</h2>
         </div>
     </div>
+    
 </div>
 
 @code {
@@ -44,12 +48,14 @@
     private decimal totalIncome;
     private decimal totalExpense;
     private decimal remainingDebt;
+    private decimal totalPaidAmount;
 
     protected override void OnInitialized()
     {
         totalIncome = TransactionDao.GetTotalIncomeAmount();
         totalExpense = TransactionDao.GetTotalExpenseAmount();
         remainingDebt = DebtDao.GetTotalDebtRemainingAmount();
+        totalPaidAmount = DebtDao.GetTotalPaidAmount();
         totalBalance = totalIncome + remainingDebt - totalExpense;
     }
 }
