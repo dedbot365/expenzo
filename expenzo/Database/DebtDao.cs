@@ -89,5 +89,15 @@ namespace expenzo.Database
             }
             return debts;
         }
+
+        public decimal GetTotalDebtRemainingAmount()
+        {
+            using var connection = _context.GetConnection();
+            connection.Open();
+            var command = connection.CreateCommand();
+            command.CommandText = "SELECT SUM(RemainingAmount) FROM Debts";
+            var result = command.ExecuteScalar();
+            return result != DBNull.Value ? Convert.ToDecimal(result) : 0;
+        }
     }
 }

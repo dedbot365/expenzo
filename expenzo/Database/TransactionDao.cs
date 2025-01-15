@@ -95,5 +95,25 @@ namespace expenzo.Database
             }
             return transactions;
         }
+
+        public decimal GetTotalIncomeAmount()
+        {
+            using var connection = _context.GetConnection();
+            connection.Open();
+            var command = connection.CreateCommand();
+            command.CommandText = "SELECT SUM(Amount) FROM Transactions WHERE Type = 'Income'";
+            var result = command.ExecuteScalar();
+            return result != DBNull.Value ? Convert.ToDecimal(result) : 0;
+        }
+
+        public decimal GetTotalExpenseAmount()
+        {
+            using var connection = _context.GetConnection();
+            connection.Open();
+            var command = connection.CreateCommand();
+            command.CommandText = "SELECT SUM(Amount) FROM Transactions WHERE Type = 'Expense'";
+            var result = command.ExecuteScalar();
+            return result != DBNull.Value ? Convert.ToDecimal(result) : 0;
+        }
     }
 }
