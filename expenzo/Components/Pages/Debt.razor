@@ -8,7 +8,6 @@
         <button class="btn btn-secondary" @onclick="ShowFilterDebtPopup" style="margin-right:5px;">Filter Debts</button>
         <button class="btn btn-primary" @onclick="ShowAddDebtPopup">Add Debt</button>
     </div>
-    
 </div>
 <AddDebtPopup IsVisible="isAddDebtPopupVisible" OnClose="HideAddDebtPopup" />
 <PayDebtPopup IsVisible="isPayDebtPopupVisible" OnClose="HidePayDebtPopup" SelectedDebt="selectedDebt" />
@@ -19,6 +18,8 @@
         <tr>
             <th>Id</th>
             <th>Amount</th>
+            <th>Remaining Amount</th>
+            <th>Paid Amount</th>
             <th>Taken Date</th>
             <th>Due Date</th>
             <th>Source</th>
@@ -33,6 +34,8 @@
             <tr>
                 <td>@debt.DebtId</td>
                 <td>@debt.DebtAmount</td>
+                <td>@debt.RemainingAmount</td>
+                <td>@debt.PaidAmount</td>
                 <td>@debt.DebtTakenDate.ToString("MM/dd/yyyy")</td>
                 <td>@debt.DebtDueDate.ToString("MM/dd/yyyy")</td>
                 <td>@debt.DebtSource</td>
@@ -52,8 +55,8 @@
     private bool isPayDebtPopupVisible = false;
     private bool isFilterDebtPopupVisible = false;
     private List<Models.Debt> debts = new List<Models.Debt>();
-    private Models.Debt selectedDebt;
-    private string searchTerm;
+    private Models.Debt? selectedDebt;
+    private string? searchTerm;
 
     [Inject]
     private DebtDao DebtDao { get; set; }

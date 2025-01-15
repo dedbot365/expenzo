@@ -22,6 +22,8 @@ namespace expenzo.Database
                 CREATE TABLE IF NOT EXISTS Debts (
                     DebtId INTEGER PRIMARY KEY AUTOINCREMENT,
                     DebtAmount DECIMAL NOT NULL,
+                    RemainingAmount DECIMAL NOT NULL,
+                    PaidAmount DECIMAL NOT NULL,
                     DebtTakenDate DATETIME NOT NULL,
                     DebtDueDate DATETIME NOT NULL,
                     DebtSource TEXT NOT NULL,
@@ -36,8 +38,10 @@ namespace expenzo.Database
             using var connection = _context.GetConnection();
             connection.Open();
             var command = connection.CreateCommand();
-            command.CommandText = "INSERT INTO Debts (DebtAmount, DebtTakenDate, DebtDueDate, DebtSource, DebtStatus, Remark) VALUES (@DebtAmount, @DebtTakenDate, @DebtDueDate, @DebtSource, @DebtStatus, @Remark)";
+            command.CommandText = "INSERT INTO Debts (DebtAmount, RemainingAmount, PaidAmount, DebtTakenDate, DebtDueDate, DebtSource, DebtStatus, Remark) VALUES (@DebtAmount, @RemainingAmount, @PaidAmount, @DebtTakenDate, @DebtDueDate, @DebtSource, @DebtStatus, @Remark)";
             command.Parameters.AddWithValue("@DebtAmount", debt.DebtAmount);
+            command.Parameters.AddWithValue("@RemainingAmount", debt.RemainingAmount);
+            command.Parameters.AddWithValue("@PaidAmount", debt.PaidAmount);
             command.Parameters.AddWithValue("@DebtTakenDate", debt.DebtTakenDate);
             command.Parameters.AddWithValue("@DebtDueDate", debt.DebtDueDate);
             command.Parameters.AddWithValue("@DebtSource", debt.DebtSource);
@@ -45,13 +49,16 @@ namespace expenzo.Database
             command.Parameters.AddWithValue("@Remark", debt.Remark);
             command.ExecuteNonQuery();
         }
+
         public void UpdateDebt(Debt debt)
         {
             using var connection = _context.GetConnection();
             connection.Open();
             var command = connection.CreateCommand();
-            command.CommandText = "UPDATE Debts SET DebtAmount = @DebtAmount, DebtStatus = @DebtStatus WHERE DebtId = @DebtId";
+            command.CommandText = "UPDATE Debts SET DebtAmount = @DebtAmount, RemainingAmount = @RemainingAmount, PaidAmount = @PaidAmount, DebtStatus = @DebtStatus WHERE DebtId = @DebtId";
             command.Parameters.AddWithValue("@DebtAmount", debt.DebtAmount);
+            command.Parameters.AddWithValue("@RemainingAmount", debt.RemainingAmount);
+            command.Parameters.AddWithValue("@PaidAmount", debt.PaidAmount);
             command.Parameters.AddWithValue("@DebtStatus", debt.DebtStatus);
             command.Parameters.AddWithValue("@DebtId", debt.DebtId);
             command.ExecuteNonQuery();
@@ -63,7 +70,7 @@ namespace expenzo.Database
             using var connection = _context.GetConnection();
             connection.Open();
             var command = connection.CreateCommand();
-            command.CommandText = "SELECT DebtId, DebtAmount, DebtTakenDate, DebtDueDate, DebtSource, DebtStatus, Remark FROM Debts";
+            command.CommandText = "SELECT DebtId, DebtAmount, RemainingAmount, PaidAmount, DebtTakenDate, DebtDueDate, DebtSource, DebtStatus, Remark FROM Debts";
             using var reader = command.ExecuteReader();
             while (reader.Read())
             {
@@ -71,11 +78,13 @@ namespace expenzo.Database
                 {
                     DebtId = reader.GetInt32(0),
                     DebtAmount = reader.GetDecimal(1),
-                    DebtTakenDate = reader.GetDateTime(2),
-                    DebtDueDate = reader.GetDateTime(3),
-                    DebtSource = reader.GetString(4),
-                    DebtStatus = reader.GetString(5),
-                    Remark = reader.GetString(6)
+                    RemainingAmount = reader.GetDecimal(2),
+                    PaidAmount = reader.GetDecimal(3),
+                    DebtTakenDate = reader.GetDateTime(4),
+                    DebtDueDate = reader.GetDateTime(5),
+                    DebtSource = reader.GetString(6),
+                    DebtStatus = reader.GetString(7),
+                    Remark = reader.GetString(8)
                 });
             }
             return debts;
