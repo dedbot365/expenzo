@@ -38,16 +38,17 @@
             return;
         }
 
-        if (paymentAmount > SelectedDebt.DebtAmount)
+        if (paymentAmount > SelectedDebt.RemainingAmount)
         {
-            message = "Payment amount cannot be more than the debt amount.";
+            message = "Payment amount cannot be more than the remaining amount.";
             messageClass = "alert alert-danger";
             return;
         }
 
-        SelectedDebt.DebtAmount -= paymentAmount;
+        SelectedDebt.PaidAmount += paymentAmount;
+        SelectedDebt.RemainingAmount -= paymentAmount;
 
-        if (SelectedDebt.DebtAmount == 0)
+        if (SelectedDebt.RemainingAmount == 0)
         {
             SelectedDebt.DebtStatus = "PaidDebts";
         }

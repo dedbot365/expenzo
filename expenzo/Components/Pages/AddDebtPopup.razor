@@ -73,19 +73,19 @@
         newDebt = new Models.Debt
         {
             DebtTakenDate = DateTime.Now.Date,
-            DebtDueDate = DateTime.Now.Date.AddDays(1) 
+            DebtDueDate = DateTime.Now.Date.AddDays(1),
+            RemainingAmount = 0,
+            PaidAmount = 0
         };
     }
 
     private void AddDebt()
     {
-        
         newDebt.DebtId = nextDebtId++;
+        newDebt.RemainingAmount = newDebt.DebtAmount;
 
-        
         if (newDebt.DebtDueDate <= DateTime.Now.Date)
         {
-            
             return;
         }
 
