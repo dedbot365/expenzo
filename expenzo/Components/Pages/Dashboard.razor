@@ -51,6 +51,44 @@
             <h2>@remainingDebt</h2>
         </div>
     </div>
+    
+    <div class="col-md-4">
+        <div class="dashboard-card bg-grey text-white text-center">
+            <h5>Highest Income</h5>
+            <h2>@highestIncome</h2>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="dashboard-card bg-grey text-white text-center">
+            <h5>Lowest Income</h5>
+            <h2>@lowestIncome</h2>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="dashboard-card bg-grey text-white text-center">
+            <h5>Highest Expense</h5>
+            <h2>@highestExpense</h2>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="dashboard-card bg-grey text-white text-center">
+            <h5>Lowest Expense</h5>
+            <h2>@lowestExpense</h2>
+        </div>
+    </div>
+     <div class="col-md-4">
+        <div class="dashboard-card bg-grey text-white text-center">
+            <h5>Highest Debt Amount</h5>
+            <h2>@highestDebtAmount</h2>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="dashboard-card bg-grey text-white text-center">
+            <h5>Lowest Debt Amount</h5>
+            <h2>@lowestDebtAmount</h2>
+        </div>
+    </div>
+
 </div>
 
 <div class="col-md-4">
@@ -70,6 +108,12 @@
     private decimal totalExpense;
     private decimal remainingDebt;
     private decimal totalPaidAmount;
+    private decimal highestIncome;
+    private decimal lowestIncome;
+    private decimal highestExpense;
+    private decimal lowestExpense;
+    private decimal highestDebtAmount;
+    private decimal lowestDebtAmount;
 
     private double[] chartData;
     private string[] chartLabels = { "Income", "Expense", "Pending Debt" };
@@ -78,6 +122,12 @@
     {
         totalIncome = TransactionDao.GetTotalIncomeAmount();
         totalExpense = TransactionDao.GetTotalExpenseAmount();
+        highestIncome = TransactionDao.GetHighestIncomeAmount();
+        lowestIncome = TransactionDao.GetLowestIncomeAmount();
+        highestExpense = TransactionDao.GetHighestExpenseAmount();
+        lowestExpense = TransactionDao.GetLowestExpenseAmount();
+        highestDebtAmount = DebtDao.GetHighestDebtAmount();
+        lowestDebtAmount = DebtDao.GetLowestDebtAmount();
         remainingDebt = DebtDao.GetTotalDebtRemainingAmount();
         totalPaidAmount = DebtDao.GetTotalPaidAmount();
         totalBalance = totalIncome + remainingDebt - totalExpense;

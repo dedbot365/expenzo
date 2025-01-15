@@ -1,6 +1,7 @@
 using expenzo.Models;
 using Microsoft.Data.Sqlite;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace expenzo.Database
 {
@@ -115,5 +116,49 @@ namespace expenzo.Database
             var result = command.ExecuteScalar();
             return result != DBNull.Value ? Convert.ToDecimal(result) : 0;
         }
+
+        public decimal GetHighestIncomeAmount()
+        {
+            using var connection = _context.GetConnection();
+            connection.Open();
+            var command = connection.CreateCommand();
+            command.CommandText = "SELECT MAX(Amount) FROM Transactions WHERE Type = 'Income'";
+            var result = command.ExecuteScalar();
+            return result != DBNull.Value ? Convert.ToDecimal(result) : 0;
+        }
+
+        public decimal GetLowestIncomeAmount()
+        {
+            using var connection = _context.GetConnection();
+            connection.Open();
+            var command = connection.CreateCommand();
+            command.CommandText = "SELECT MIN(Amount) FROM Transactions WHERE Type = 'Income'";
+            var result = command.ExecuteScalar();
+            return result != DBNull.Value ? Convert.ToDecimal(result) : 0;
+        }
+
+        public decimal GetHighestExpenseAmount()
+        {
+            using var connection = _context.GetConnection();
+            connection.Open();
+            var command = connection.CreateCommand();
+            command.CommandText = "SELECT MAX(Amount) FROM Transactions WHERE Type = 'Expense'";
+            var result = command.ExecuteScalar();
+            return result != DBNull.Value ? Convert.ToDecimal(result) : 0;
+        }
+
+        public decimal GetLowestExpenseAmount()
+        {
+            using var connection = _context.GetConnection();
+            connection.Open();
+            var command = connection.CreateCommand();
+            command.CommandText = "SELECT MIN(Amount) FROM Transactions WHERE Type = 'Expense'";
+            var result = command.ExecuteScalar();
+            return result != DBNull.Value ? Convert.ToDecimal(result) : 0;
+        }
+
+
+
+
     }
 }
