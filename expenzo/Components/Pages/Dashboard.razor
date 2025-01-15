@@ -20,8 +20,8 @@
     {
         var totalIncome = TransactionDao.GetTotalIncomeAmount();
         var totalExpense = TransactionDao.GetTotalExpenseAmount();
-        var totalDebt = DebtDao.GetTotalDebtRemainingAmount();
-        totalBalance = totalIncome + totalDebt - totalExpense;
+        var remainingDebt = DebtDao.GetTotalDebtRemainingAmount();
+        totalBalance = totalIncome + remainingDebt - totalExpense;
     }
 }
 
