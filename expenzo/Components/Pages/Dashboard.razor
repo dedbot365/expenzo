@@ -1,7 +1,7 @@
 ﻿@page "/home"
 @inject DebtDao DebtDao
 @inject TransactionDao TransactionDao
-
+@using MudBlazor
 <h3>Dashboard</h3>
 <style>
     .bg-skyblue {
@@ -12,6 +12,11 @@
     }
     .bg-grey {
         background-color: grey;
+    }
+    .dashboard-card {
+        border-radius: 15px; 
+        padding: 20px; 
+        margin:10px;
     }
 </style>
 
@@ -46,8 +51,18 @@
             <h2>@remainingDebt</h2>
         </div>
     </div>
-    
 </div>
+
+<div class="col-md-4">
+        <div class="dashboard-card bg-grey text-white text-center">
+            <h3>Income, Expense & Debt Chart</h3>
+            <MudPaper Class="pa-4">
+                <MudChart ChartType="ChartType.Pie" InputData="@chartData" InputLabels="@chartLabels" Width="300px" Height="300px" />
+            </MudPaper>
+        </div>
+    </div>
+
+
 
 @code {
     private decimal totalBalance;
@@ -56,6 +71,9 @@
     private decimal remainingDebt;
     private decimal totalPaidAmount;
 
+    private double[] chartData;
+    private string[] chartLabels = { "Income", "Expense", "Pending Debt" };
+
     protected override void OnInitialized()
     {
         totalIncome = TransactionDao.GetTotalIncomeAmount();
@@ -63,5 +81,7 @@
         remainingDebt = DebtDao.GetTotalDebtRemainingAmount();
         totalPaidAmount = DebtDao.GetTotalPaidAmount();
         totalBalance = totalIncome + remainingDebt - totalExpense;
+
+        chartData = new double[] { (double)totalIncome, (double)totalExpense, (double)remainingDebt };
     }
 }
