@@ -167,5 +167,27 @@ namespace expenzo.Database
             command.ExecuteNonQuery();
         }
 
+        public List<Debt> GetTop5UpcomingDebts(int count)
+        {
+            var debts = new List<Debt>();
+            using var connection = _context.GetConnection();
+            connection.Open();
+            var command = connection.CreateCommand();
+            command.CommandText = "SELECT Remark, RemainingAmount, PaidAmount, DebtDueDate FROM Debts WHERE DebtStatus = 'PendingDebt' ORDER BY DebtDueDate ASC LIMIT @Count";
+            command.Parameters.AddWithValue("@Count", count);
+            using var reader = command.ExecuteReader();
+            while (reader.Read())
+            {
+                debts.Add(new Debt
+                {
+                    Remark = reader.GetString(0),
+                    RemainingAmount = reader.GetDecimal(1),
+                    PaidAmount = reader.GetDecimal(2),
+                    DebtDueDate = reader.GetDateTime(3)
+                });
+            }
+            return debts;
+        }
+
     }
 }

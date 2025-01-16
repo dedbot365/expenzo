@@ -42,8 +42,8 @@
         color: white !important;
     }
     .mud-chart-container .mud-chart-axis-labels text {
-        transform: translateY(-10px); }
-    
+        transform: translateY(-10px); 
+    }
     .mud-chart-line {
         overflow: visible;
     }
@@ -127,7 +127,7 @@
         </div>
        <div class="col-md-6">
             <div class="dashboard-card bg-purple text-white text-center">
-                <h3>Top 5 Recent Transactions</h3>
+                <h3>Recent Transactions</h3>
                 <table class="table table-striped mt-3 text-white table-custom-width table-custom-padding">
                     <thead>
                         <tr>
@@ -149,21 +149,42 @@
                 </table>
             </div>
         </div>
-    
-
     </div>
-        <div class="col-md-12">
-            <div class="dashboard-card bg-lightorange text-white text-center">
-                <h3>Financial Overview</h3>
-                <MudPaper Class="pa-4">
-                    <MudChart Class="custom-chart" ChartType="ChartType.Bar" ChartSeries="@Series" XAxisLabels="@XAxisLabels" Width="100%" Height="800px" LabelFormat="0" />
-                </MudPaper>
-            </div>
+    <div class="col-md-12">
+        <div class="dashboard-card bg-aubergine text-white text-center">
+            <h3>Upcoming Debts</h3>
+            <table class="table table-striped mt-3 text-white table-custom-width table-custom-padding">
+                <thead>
+                    <tr>
+                        <th>Remark</th>
+                        <th>Remaining Amount</th>
+                        <th>Paid Amount</th>
+                        <th>Due Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var debt in topUpcomingDebts)
+                    {
+                        <tr>
+                            <td>@debt.Remark</td>
+                            <td>@debt.RemainingAmount</td>
+                            <td>@debt.PaidAmount</td>
+                            <td>@debt.DebtDueDate.ToString("MM/dd/yyyy")</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="col-md-12">
+        <div class="dashboard-card bg-lightorange text-white text-center">
+            <h3>Financial Overview</h3>
+            <MudPaper Class="pa-4">
+                <MudChart Class="custom-chart" ChartType="ChartType.Bar" ChartSeries="@Series" XAxisLabels="@XAxisLabels" Width="100%" Height="800px" LabelFormat="0" />
+            </MudPaper>
+        </div>
     </div>
 </div>
-
-
-
 
 @code {
     private decimal totalBalance;
@@ -181,6 +202,7 @@
     private int totalTransactions;
 
     private List<Models.Transaction> top5RecentTransactions = new List<Models.Transaction>();
+    private List<Models.Debt> topUpcomingDebts = new List<Models.Debt>();
 
     private double[] chartData;
     private string[] chartLabels = { "Income", "Expense", "Total Debt" };
@@ -215,5 +237,6 @@
         Series[1].Data = new double[] { (double)lowestIncome, (double)lowestExpense, (double)lowestDebtAmount };
 
         top5RecentTransactions = TransactionService.GetTop5RecentTransactions();
+        topUpcomingDebts = DebtDao.GetTop5UpcomingDebts(5);
     }
 }
