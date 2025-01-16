@@ -1,5 +1,6 @@
 ﻿@page "/pay-debt-popup"
-@inject DebtDao DebtDao
+@inject IDebtService DebtService
+
 
 @code {
     [Parameter]
@@ -53,7 +54,7 @@
             SelectedDebt.DebtStatus = "PaidDebts";
         }
 
-        DebtDao.UpdateDebt(SelectedDebt);
+        DebtService.UpdateDebt(SelectedDebt);
 
         message = "Payment successful.";
         messageClass = "alert alert-success";

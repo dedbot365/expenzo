@@ -1,5 +1,5 @@
 ﻿@page "/debt"
-@inject DebtDao DebtDao
+@inject IDebtService DebtService
 
 <h3>Debt</h3>
 <div style="display: flex; justify-content: space-between; align-items: center;">
@@ -70,8 +70,9 @@
 
     protected override void OnInitialized()
     {
-        debts = DebtDao.GetDebts();
+        debts = DebtService.GetDebts();
     }
+
 
     private void ShowAddDebtPopup()
     {
@@ -81,8 +82,9 @@
     private void HideAddDebtPopup()
     {
         isAddDebtPopupVisible = false;
-        debts = DebtDao.GetDebts();
+        debts = DebtService.GetDebts();
     }
+
 
     private void ShowEditDebtPopup(Models.Debt debt)
     {
@@ -93,7 +95,7 @@
     private void HideEditDebtPopup()
     {
         isEditDebtPopupVisible = false;
-        debts = DebtDao.GetDebts();
+        debts = DebtService.GetDebts();
     }
 
     private void ShowPayDebtPopup(Models.Debt debt)
@@ -128,30 +130,31 @@
         isDeleteDebtPopupVisible = false;
     }
 
-    private void DeleteDebt()
+   private void DeleteDebt()
     {
         if (selectedDebt != null)
         {
-            DebtDao.DeleteDebt(selectedDebt.DebtId);
-            debts = DebtDao.GetDebts();
+            DebtService.DeleteDebt(selectedDebt.DebtId);
+            debts = DebtService.GetDebts();
             isDeleteDebtPopupVisible = false;
         }
     }
+
 
     private void ApplyFilter(List<Models.Debt> filteredDebts)
     {
         debts = filteredDebts;
     }
 
-    private void SearchDebts()
+   private void SearchDebts()
+{
+    if (!string.IsNullOrEmpty(searchTerm))
     {
-        if (!string.IsNullOrEmpty(searchTerm))
-        {
-            debts = DebtDao.GetDebts().Where(d => d.Remark.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)).ToList();
-        }
-        else
-        {
-            debts = DebtDao.GetDebts();
-        }
+        debts = DebtService.GetDebts().Where(d => d.Remark.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)).ToList();
     }
+    else
+    {
+        debts = DebtService.GetDebts();
+    }
+}
 }

@@ -1,5 +1,5 @@
 ﻿@page "/edit-debt"
-@inject DebtDao DebtDao
+@inject IDebtService DebtService
 
 @if (IsVisible)
 {
@@ -85,10 +85,10 @@
     }
 
     private void UpdateDebt()
-    {
-        DebtDao.UpdateDebt(debtToEdit);
-        ClosePopup();
-    }
+{
+    DebtService.UpdateDebt(debtToEdit);
+    ClosePopup();
+}
 
     private void ClosePopup()
     {

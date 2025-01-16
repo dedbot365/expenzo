@@ -1,4 +1,5 @@
 ﻿@page "/add-debt"
+@inject IDebtService DebtService
 
 @if (IsVisible)
 {
@@ -67,9 +68,6 @@
     private Models.Debt newDebt;
     private int nextDebtId = 1;
 
-    [Inject]
-    private DebtDao DebtDao { get; set; }
-
     protected override void OnParametersSet()
     {
         if (IsVisible)
@@ -89,7 +87,7 @@
         };
     }
 
-    private void AddDebt()
+   private void AddDebt()
     {
         newDebt.DebtId = nextDebtId++;
         newDebt.RemainingAmount = newDebt.DebtAmount;
@@ -99,7 +97,7 @@
             return;
         }
 
-        DebtDao.AddDebt(newDebt);
+        DebtService.AddDebt(newDebt);
         ClosePopup();
     }
 
