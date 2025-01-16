@@ -7,13 +7,13 @@ namespace expenzo.Services
 {
     public class TransactionService : ITransactionService
     {
-        private readonly TransactionDao _transactionDao;
-
+        private readonly TransactionDao _transactionDao; // Data access object for transaction operations
+        // Constructor for the TransactionService class
         public TransactionService(TransactionDao transactionDao)
         {
             _transactionDao = transactionDao;
         }
-
+        // Methods for creating, adding, updating, deleting, and retrieving transactions, as well as calculating various transaction statistics.
         public void CreateTable() => _transactionDao.CreateTable();
         public void AddTransaction(Transaction transaction) => _transactionDao.AddTransaction(transaction);
         public void UpdateTransaction(Transaction transaction) => _transactionDao.UpdateTransaction(transaction);

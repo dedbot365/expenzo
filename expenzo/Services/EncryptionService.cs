@@ -9,7 +9,7 @@ public class EncryptionService
     private static byte[] iv = Array.Empty<byte>();
     private static readonly string keyPath;
     private static readonly string ivPath;
-
+    // Static constructor to initialize key and IV
     static EncryptionService()
     {
         // Define paths for key and IV
@@ -56,9 +56,9 @@ public class EncryptionService
                 {
                     using (var sw = new StreamWriter(cs))
                     {
-                        sw.Write(plainText);
+                        sw.Write(plainText); // Encrypt the plain text
                     }
-                    return Convert.ToBase64String(ms.ToArray());
+                    return Convert.ToBase64String(ms.ToArray()); // Return the encrypted data as a base64 string
                 }
             }
         }
@@ -78,7 +78,7 @@ public class EncryptionService
                 {
                     using (var sr = new StreamReader(cs))
                     {
-                        return sr.ReadToEnd();
+                        return sr.ReadToEnd(); // Decrypt the cipher text and return
                     }
                 }
             }

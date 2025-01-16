@@ -7,11 +7,12 @@ namespace expenzo.Database
     public class UserDao
     {
         private readonly DatabaseContext _context;
-
+        // Constructor for the UserDao class
         public UserDao(DatabaseContext context)
         {
             _context = context;
         }
+        // Create table for the Users
 
         public void CreateTable()
         {
@@ -27,7 +28,7 @@ namespace expenzo.Database
                 )";
             command.ExecuteNonQuery();
         }
-
+        // Add values to the users table
         public void AddUser(User user)
         {
             using var connection = _context.GetConnection();
@@ -39,7 +40,7 @@ namespace expenzo.Database
             command.Parameters.AddWithValue("@Currency", user.Currency);
             command.ExecuteNonQuery();
         }
-
+        // Get user by username and password
         public async Task<User> GetUser(string username, string password)
         {
             using var connection = _context.GetConnection();
@@ -61,7 +62,7 @@ namespace expenzo.Database
             }
             return null;
         }
-
+        // Check if the user exists
         public async Task<bool> UserExists(string username)
         {
             using var connection = _context.GetConnection();
@@ -72,7 +73,7 @@ namespace expenzo.Database
             var count = (long)await command.ExecuteScalarAsync();
             return count > 0;
         }
-
+        // Check if any user exists
         public async Task<bool> AnyUserExists()
         {
             using var connection = _context.GetConnection();
@@ -82,7 +83,7 @@ namespace expenzo.Database
             var count = (long)await command.ExecuteScalarAsync();
             return count > 0;
         }
-
+        // Update the values in the users table
         public async Task<bool> UpdateUser(User user) // Add this method
         {
             using var connection = _context.GetConnection();

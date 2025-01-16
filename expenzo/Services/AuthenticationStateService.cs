@@ -8,22 +8,22 @@ namespace expenzo.Services
 
         public User GetAuthenticatedUser()
         {
-            return authenticatedUser;
+            return authenticatedUser; // Retrieve the currently authenticated user
         }
 
         public void SetAuthenticatedUser(User user)
         {
-            authenticatedUser = user;
+            authenticatedUser = user; // Set the authenticated user
         }
 
         public bool IsAuthenticated()
         {
-            return authenticatedUser != null;
+            return authenticatedUser != null; // Check if a user is authenticated
         }
 
         public void Logout()
         {
-            authenticatedUser = null;
+            authenticatedUser = null; // Log out the user by setting authenticatedUser to null
         }
     }
 }

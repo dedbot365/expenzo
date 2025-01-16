@@ -8,12 +8,12 @@ namespace expenzo.Database
     public class DebtDao
     {
         private readonly DatabaseContext _context;
-
+        // Constructor for the DebtDao class
         public DebtDao(DatabaseContext context)
         {
             _context = context;
         }
-
+        //Create table for the Debts
         public void CreateTable()
         {
             using var connection = _context.GetConnection();
@@ -33,7 +33,7 @@ namespace expenzo.Database
                 )";
             command.ExecuteNonQuery();
         }
-
+        // Add values to the debts table   
         public void AddDebt(Debt debt)
         {
             using var connection = _context.GetConnection();
@@ -51,20 +51,7 @@ namespace expenzo.Database
             command.ExecuteNonQuery();
         }
 
-        // public void UpdateDebt(Debt debt)
-        // {
-        //     using var connection = _context.GetConnection();
-        //     connection.Open();
-        //     var command = connection.CreateCommand();
-        //     command.CommandText = "UPDATE Debts SET DebtAmount = @DebtAmount, RemainingAmount = @RemainingAmount, PaidAmount = @PaidAmount, DebtStatus = @DebtStatus WHERE DebtId = @DebtId";
-        //     command.Parameters.AddWithValue("@DebtAmount", debt.DebtAmount);
-        //     command.Parameters.AddWithValue("@RemainingAmount", debt.RemainingAmount);
-        //     command.Parameters.AddWithValue("@PaidAmount", debt.PaidAmount);
-        //     command.Parameters.AddWithValue("@DebtStatus", debt.DebtStatus);
-        //     command.Parameters.AddWithValue("@DebtId", debt.DebtId);
-        //     command.ExecuteNonQuery();
-        // }
-
+        // Update the values in the debts table
         public void UpdateDebt(Debt debt)
         {
             using var connection = _context.GetConnection();
@@ -81,7 +68,7 @@ namespace expenzo.Database
             command.Parameters.AddWithValue("@DebtId", debt.DebtId);
             command.ExecuteNonQuery();
         }
-
+        // Get the values from the debts table
         public List<Debt> GetDebts()
         {
             var debts = new List<Debt>();
@@ -107,7 +94,7 @@ namespace expenzo.Database
             }
             return debts;
         }
-
+        // Get the total debt remaining amount
         public decimal GetTotalDebtRemainingAmount()
         {
             using var connection = _context.GetConnection();
@@ -117,7 +104,7 @@ namespace expenzo.Database
             var result = command.ExecuteScalar();
             return result != DBNull.Value ? Convert.ToDecimal(result) : 0;
         }
-
+        // Get the total paid amount
         public decimal GetTotalPaidAmount()
         {
             using var connection = _context.GetConnection();
@@ -127,7 +114,7 @@ namespace expenzo.Database
             var result = command.ExecuteScalar();
             return result != DBNull.Value ? Convert.ToDecimal(result) : 0;
         }
-
+        // Get the highest debt amount
         public decimal GetHighestDebtAmount()
         {
             using var connection = _context.GetConnection();
@@ -137,7 +124,7 @@ namespace expenzo.Database
             var result = command.ExecuteScalar();
             return result != DBNull.Value ? Convert.ToDecimal(result) : 0;
         }
-
+        // Get the lowest debt amount
         public decimal GetLowestDebtAmount()
         {
             using var connection = _context.GetConnection();
@@ -147,7 +134,7 @@ namespace expenzo.Database
             var result = command.ExecuteScalar();
             return result != DBNull.Value ? Convert.ToDecimal(result) : 0;
         }
-
+        // Get the total debt count
         public int GetTotalDebtCount()
         {
             using var connection = _context.GetConnection();
@@ -157,7 +144,7 @@ namespace expenzo.Database
             var result = command.ExecuteScalar();
             return result != DBNull.Value ? Convert.ToInt32(result) : 0;
         }
-
+        // Delete the debt from the debts table
         public void DeleteDebt(int debtId)
         {
             using var connection = _context.GetConnection();
@@ -167,7 +154,7 @@ namespace expenzo.Database
             command.Parameters.AddWithValue("@DebtId", debtId);
             command.ExecuteNonQuery();
         }
-
+        // Get the top 5 upcoming debts
         public List<Debt> GetTop5UpcomingDebts(int count)
         {
             var debts = new List<Debt>();

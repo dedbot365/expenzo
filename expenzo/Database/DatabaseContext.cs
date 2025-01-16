@@ -23,7 +23,7 @@ public class DatabaseContext
     //     throw; 
     // }
 }
-
+    // Get a connection to the SQLite database
     public SqliteConnection GetConnection()
     {
         return new SqliteConnection($"Data Source={_databasePath}");

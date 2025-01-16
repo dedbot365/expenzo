@@ -7,13 +7,13 @@ namespace expenzo.Services
 {
     public class DebtService : IDebtService
     {
-        private readonly DebtDao _debtDao;
-
+        private readonly DebtDao _debtDao; // Data access object for debt-related operations
+        // Constructor for the DebtService class
         public DebtService(DebtDao debtDao)
         {
             _debtDao = debtDao;
         }
-
+        // Methods for creating, adding, updating, deleting, and retrieving debts, as well as calculating various debt statistics.
         public void CreateTable() => _debtDao.CreateTable();
         public void AddDebt(Debt debt) => _debtDao.AddDebt(debt);
         public void UpdateDebt(Debt debt) => _debtDao.UpdateDebt(debt);

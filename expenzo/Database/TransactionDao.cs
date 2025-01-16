@@ -8,12 +8,12 @@ namespace expenzo.Database
     public class TransactionDao
     {
         private readonly DatabaseContext _context;
-
+        // Constructor for the TransactionDao class
         public TransactionDao(DatabaseContext context)
         {
             _context = context;
         }
-
+        // Create table for the Transactions
         public void CreateTable()
         {
             using var connection = _context.GetConnection();
@@ -31,7 +31,7 @@ namespace expenzo.Database
                 )";
             command.ExecuteNonQuery();
         }
-
+        // Add values to the transactions table
         public void AddTransaction(Transaction transaction)
         {
             using var connection = _context.GetConnection();
@@ -46,7 +46,7 @@ namespace expenzo.Database
             command.Parameters.AddWithValue("@Remarks", transaction.Remarks);
             command.ExecuteNonQuery();
         }
-
+        // Update the values in the transactions table
         public void UpdateTransaction(Transaction transaction)
         {
             using var connection = _context.GetConnection();
@@ -62,7 +62,7 @@ namespace expenzo.Database
             command.Parameters.AddWithValue("@TransactionId", transaction.TransactionId);
             command.ExecuteNonQuery();
         }
-
+        // Delete a transaction from the transactions table by ID
         public void DeleteTransaction(int transactionId)
         {
             using var connection = _context.GetConnection();
@@ -72,7 +72,7 @@ namespace expenzo.Database
             command.Parameters.AddWithValue("@TransactionId", transactionId);
             command.ExecuteNonQuery();
         }
-
+        // Retrieve all transactions from the transactions table
         public List<Transaction> GetTransactions()
         {
             var transactions = new List<Transaction>();
@@ -96,7 +96,7 @@ namespace expenzo.Database
             }
             return transactions;
         }
-
+        // Calculate the total income amount from the transactions table
         public decimal GetTotalIncomeAmount()
         {
             using var connection = _context.GetConnection();
@@ -106,7 +106,7 @@ namespace expenzo.Database
             var result = command.ExecuteScalar();
             return result != DBNull.Value ? Convert.ToDecimal(result) : 0;
         }
-
+        // Calculate the total expense amount from the transactions table
         public decimal GetTotalExpenseAmount()
         {
             using var connection = _context.GetConnection();
@@ -116,7 +116,7 @@ namespace expenzo.Database
             var result = command.ExecuteScalar();
             return result != DBNull.Value ? Convert.ToDecimal(result) : 0;
         }
-
+        // Calculate the highest income amount from the transactions table
         public decimal GetHighestIncomeAmount()
         {
             using var connection = _context.GetConnection();
@@ -126,7 +126,7 @@ namespace expenzo.Database
             var result = command.ExecuteScalar();
             return result != DBNull.Value ? Convert.ToDecimal(result) : 0;
         }
-
+        // Calculate the lowest income amount from the transactions table
         public decimal GetLowestIncomeAmount()
         {
             using var connection = _context.GetConnection();
@@ -136,7 +136,7 @@ namespace expenzo.Database
             var result = command.ExecuteScalar();
             return result != DBNull.Value ? Convert.ToDecimal(result) : 0;
         }
-
+        // Calculate the highest expense amount from the transactions table
         public decimal GetHighestExpenseAmount()
         {
             using var connection = _context.GetConnection();
@@ -146,7 +146,7 @@ namespace expenzo.Database
             var result = command.ExecuteScalar();
             return result != DBNull.Value ? Convert.ToDecimal(result) : 0;
         }
-
+        // Calculate the lowest expense amount from the transactions table
         public decimal GetLowestExpenseAmount()
         {
             using var connection = _context.GetConnection();
@@ -156,7 +156,7 @@ namespace expenzo.Database
             var result = command.ExecuteScalar();
             return result != DBNull.Value ? Convert.ToDecimal(result) : 0;
         }
-
+        // Get the total transaction count from the transactions table
         public int GetTotalTransactionCount()
         {
             using var connection = _context.GetConnection();
@@ -166,7 +166,7 @@ namespace expenzo.Database
             var result = command.ExecuteScalar();
             return result != DBNull.Value ? Convert.ToInt32(result) : 0;
         }
-
+        // Retrieve the top 5 recent transactions from the transactions table
         public List<Transaction> GetTop5RecentTransactions()
         {
             var transactions = new List<Transaction>();

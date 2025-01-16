@@ -7,12 +7,12 @@ namespace expenzo.Database
     public class CategoryDao
     {
         private readonly DatabaseContext _context;
-
+        // Constructor for the CategoryDao class
         public CategoryDao(DatabaseContext context)
         {
             _context = context;
         }
-
+        // Create table for the Categories
         public void CreateTable()
         {
             using var connection = _context.GetConnection();
@@ -45,7 +45,7 @@ namespace expenzo.Database
                 }
             }
         }
-
+        // Add values to the categories table
         public void AddCategory(Category category)
         {
             using var connection = _context.GetConnection();
@@ -55,7 +55,7 @@ namespace expenzo.Database
             command.Parameters.AddWithValue("@Name", category.Name);
             command.ExecuteNonQuery();
         }
-
+        // Get all categories from the categories table
         public List<Category> GetCategories()
         {
             var categories = new List<Category>();
@@ -74,7 +74,7 @@ namespace expenzo.Database
             }
             return categories;
         }
-
+        // Update the values in the categories table
         public void UpdateCategory(Category category)
         {
             using var connection = _context.GetConnection();
@@ -85,7 +85,7 @@ namespace expenzo.Database
             command.Parameters.AddWithValue("@Id", category.Id);
             command.ExecuteNonQuery();
         }
-
+        // Delete a category from the categories table by ID
         public void DeleteCategory(int categoryId)
         {
             using var connection = _context.GetConnection();
