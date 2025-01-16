@@ -50,16 +50,33 @@ namespace expenzo.Database
             command.ExecuteNonQuery();
         }
 
+        // public void UpdateDebt(Debt debt)
+        // {
+        //     using var connection = _context.GetConnection();
+        //     connection.Open();
+        //     var command = connection.CreateCommand();
+        //     command.CommandText = "UPDATE Debts SET DebtAmount = @DebtAmount, RemainingAmount = @RemainingAmount, PaidAmount = @PaidAmount, DebtStatus = @DebtStatus WHERE DebtId = @DebtId";
+        //     command.Parameters.AddWithValue("@DebtAmount", debt.DebtAmount);
+        //     command.Parameters.AddWithValue("@RemainingAmount", debt.RemainingAmount);
+        //     command.Parameters.AddWithValue("@PaidAmount", debt.PaidAmount);
+        //     command.Parameters.AddWithValue("@DebtStatus", debt.DebtStatus);
+        //     command.Parameters.AddWithValue("@DebtId", debt.DebtId);
+        //     command.ExecuteNonQuery();
+        // }
+
         public void UpdateDebt(Debt debt)
         {
             using var connection = _context.GetConnection();
             connection.Open();
             var command = connection.CreateCommand();
-            command.CommandText = "UPDATE Debts SET DebtAmount = @DebtAmount, RemainingAmount = @RemainingAmount, PaidAmount = @PaidAmount, DebtStatus = @DebtStatus WHERE DebtId = @DebtId";
+            command.CommandText = "UPDATE Debts SET DebtAmount = @DebtAmount, RemainingAmount = @RemainingAmount, PaidAmount = @PaidAmount, DebtStatus = @DebtStatus, DebtDueDate = @DebtDueDate, DebtSource = @DebtSource, Remark = @Remark WHERE DebtId = @DebtId";
             command.Parameters.AddWithValue("@DebtAmount", debt.DebtAmount);
             command.Parameters.AddWithValue("@RemainingAmount", debt.RemainingAmount);
             command.Parameters.AddWithValue("@PaidAmount", debt.PaidAmount);
             command.Parameters.AddWithValue("@DebtStatus", debt.DebtStatus);
+            command.Parameters.AddWithValue("@DebtDueDate", debt.DebtDueDate);
+            command.Parameters.AddWithValue("@DebtSource", debt.DebtSource);
+            command.Parameters.AddWithValue("@Remark", debt.Remark);
             command.Parameters.AddWithValue("@DebtId", debt.DebtId);
             command.ExecuteNonQuery();
         }
