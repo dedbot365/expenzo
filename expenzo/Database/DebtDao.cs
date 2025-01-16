@@ -157,5 +157,15 @@ namespace expenzo.Database
             return result != DBNull.Value ? Convert.ToInt32(result) : 0;
         }
 
+        public void DeleteDebt(int debtId)
+        {
+            using var connection = _context.GetConnection();
+            connection.Open();
+            var command = connection.CreateCommand();
+            command.CommandText = "DELETE FROM Debts WHERE DebtId = @DebtId";
+            command.Parameters.AddWithValue("@DebtId", debtId);
+            command.ExecuteNonQuery();
+        }
+
     }
 }

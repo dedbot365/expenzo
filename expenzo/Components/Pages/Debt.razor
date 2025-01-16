@@ -6,7 +6,7 @@
     <div style="flex-grow: 1;">
         <input type="text" @bind="searchTerm" placeholder="Search by Remark" class="form-control" style="display:inline-block; width:60%; margin-right:5px;" />
         <button class="btn btn-secondary" @onclick="SearchDebts" style="margin-right:5px;">Search</button>
-        <button class="btn btn-secondary" @onclick="ShowFilterDebtPopup" style="margin-right:5px;">Filter Debts</button>
+        <button class="btn btn-secondary" @onclick="ShowFilterDebtPopup" style="margin-right:3px;">Filter Debts</button>
         <button class="btn btn-primary" @onclick="ShowAddDebtPopup">Add Debt</button>
     </div>
 </div>
@@ -14,6 +14,7 @@
 <EditDebtPopup IsVisible="isEditDebtPopupVisible" OnClose="HideEditDebtPopup" DebtToEdit="selectedDebt" />
 <PayDebtPopup IsVisible="isPayDebtPopupVisible" OnClose="HidePayDebtPopup" SelectedDebt="selectedDebt" />
 <FilterDebtPopup IsVisible="isFilterDebtPopupVisible" OnClose="HideFilterDebtPopup" OnFilter="ApplyFilter" />
+<DeleteDebtPopup IsVisible="isDeleteDebtPopupVisible" OnClose="HideDeleteDebtPopup" OnDelete="DeleteDebt" DebtToDelete="selectedDebt" />
 
 <table class="table mt-3">
     <thead>
@@ -47,8 +48,9 @@
                     @if (debt.DebtStatus == "PendingDebt")
                     {
                         <button class="btn btn-secondary" @onclick="() => ShowEditDebtPopup(debt)">Edit</button>
+                        <button class="btn btn-primary" @onclick="() => ShowPayDebtPopup(debt)">Pay</button>
                     }
-                    <button class="btn btn-primary" @onclick="() => ShowPayDebtPopup(debt)">Pay</button>
+                    <button class="btn btn-danger ms-2" @onclick="() => ShowDeleteDebtPopup(debt)">Delete</button>
                 </td>
             </tr>
         }
@@ -61,6 +63,7 @@
     private bool isEditDebtPopupVisible = false;
     private bool isPayDebtPopupVisible = false;
     private bool isFilterDebtPopupVisible = false;
+    private bool isDeleteDebtPopupVisible = false;
     private List<Models.Debt> debts = new List<Models.Debt>();
     private Models.Debt? selectedDebt;
     private string? searchTerm;
@@ -112,6 +115,27 @@
     private void HideFilterDebtPopup()
     {
         isFilterDebtPopupVisible = false;
+    }
+
+    private void ShowDeleteDebtPopup(Models.Debt debt)
+    {
+        selectedDebt = debt;
+        isDeleteDebtPopupVisible = true;
+    }
+
+    private void HideDeleteDebtPopup()
+    {
+        isDeleteDebtPopupVisible = false;
+    }
+
+    private void DeleteDebt()
+    {
+        if (selectedDebt != null)
+        {
+            DebtDao.DeleteDebt(selectedDebt.DebtId);
+            debts = DebtDao.GetDebts();
+            isDeleteDebtPopupVisible = false;
+        }
     }
 
     private void ApplyFilter(List<Models.Debt> filteredDebts)
