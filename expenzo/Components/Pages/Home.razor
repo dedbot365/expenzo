@@ -1,7 +1,8 @@
 ﻿@page "/home"
-@inject DebtDao DebtDao
-@inject TransactionDao TransactionDao
+@inject ITransactionService TransactionService
+@inject IDebtService DebtService
 @using MudBlazor
+
 <h3>Dashboard</h3>
 <style>
     .bg-blue {
@@ -41,8 +42,8 @@
         color: white !important;
     }
     .mud-chart-container .mud-chart-axis-labels text {
-        transform: translateY(-10px); }
-    
+        transform: translateY(-10px); 
+    }
     .mud-chart-line {
         overflow: visible;
     }
@@ -108,7 +109,7 @@
     </div>
     <div class="col-md-4">
         <div class="dashboard-card bg-lilac text-white text-center">
-            <h3>Pending Debts</h3>
+            <h3>Pending Debts:</h3>
             <h3>@remainingDebt</h3><br/>
         </div>
     </div> 
@@ -126,7 +127,7 @@
         </div>
        <div class="col-md-6">
             <div class="dashboard-card bg-purple text-white text-center">
-                <h3>Top 5 Recent Transactions</h3>
+                <h3>Recent Transactions</h3>
                 <table class="table table-striped mt-3 text-white table-custom-width table-custom-padding">
                     <thead>
                         <tr>
@@ -148,21 +149,42 @@
                 </table>
             </div>
         </div>
-    
-
     </div>
-        <div class="col-md-12">
-            <div class="dashboard-card bg-lightorange text-white text-center">
-                <h3>Financial Overview</h3>
-                <MudPaper Class="pa-4">
-                    <MudChart Class="custom-chart" ChartType="ChartType.Bar" ChartSeries="@Series" XAxisLabels="@XAxisLabels" Width="100%" Height="800px" LabelFormat="0" />
-                </MudPaper>
-            </div>
+    <div class="col-md-12">
+        <div class="dashboard-card bg-aubergine text-white text-center">
+            <h3>Upcoming Debts</h3>
+            <table class="table table-striped mt-3 text-white table-custom-width table-custom-padding">
+                <thead>
+                    <tr>
+                        <th>Remark</th>
+                        <th>Remaining Amount</th>
+                        <th>Paid Amount</th>
+                        <th>Due Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var debt in topUpcomingDebts)
+                    {
+                        <tr>
+                            <td>@debt.Remark</td>
+                            <td>@debt.RemainingAmount</td>
+                            <td>@debt.PaidAmount</td>
+                            <td>@debt.DebtDueDate.ToString("MM/dd/yyyy")</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="col-md-12">
+        <div class="dashboard-card bg-lightorange text-white text-center">
+            <h3>Financial Overview</h3>
+            <MudPaper Class="pa-4">
+                <MudChart Class="custom-chart" ChartType="ChartType.Bar" ChartSeries="@Series" XAxisLabels="@XAxisLabels" Width="100%" Height="800px" LabelFormat="0" />
+            </MudPaper>
+        </div>
     </div>
 </div>
-
-
-
 
 @code {
     private decimal totalBalance;
@@ -180,6 +202,7 @@
     private int totalTransactions;
 
     private List<Models.Transaction> top5RecentTransactions = new List<Models.Transaction>();
+    private List<Models.Debt> topUpcomingDebts = new List<Models.Debt>();
 
     private double[] chartData;
     private string[] chartLabels = { "Income", "Expense", "Total Debt" };
@@ -195,24 +218,25 @@
 
     protected override void OnInitialized()
     {
-        totalIncome = TransactionDao.GetTotalIncomeAmount();
-        totalExpense = TransactionDao.GetTotalExpenseAmount();
-        highestIncome = TransactionDao.GetHighestIncomeAmount();
-        lowestIncome = TransactionDao.GetLowestIncomeAmount();
-        highestExpense = TransactionDao.GetHighestExpenseAmount();
-        lowestExpense = TransactionDao.GetLowestExpenseAmount();
-        highestDebtAmount = DebtDao.GetHighestDebtAmount();
-        lowestDebtAmount = DebtDao.GetLowestDebtAmount();
-        remainingDebt = DebtDao.GetTotalDebtRemainingAmount();
-        totalPaidAmount = DebtDao.GetTotalPaidAmount();
+        totalIncome = TransactionService.GetTotalIncomeAmount();
+        totalExpense = TransactionService.GetTotalExpenseAmount();
+        highestIncome = TransactionService.GetHighestIncomeAmount();
+        lowestIncome = TransactionService.GetLowestIncomeAmount();
+        highestExpense = TransactionService.GetHighestExpenseAmount();
+        lowestExpense = TransactionService.GetLowestExpenseAmount();
+        highestDebtAmount = DebtService.GetHighestDebtAmount();
+        lowestDebtAmount = DebtService.GetLowestDebtAmount();
+        remainingDebt = DebtService.GetTotalDebtRemainingAmount();
+        totalPaidAmount = DebtService.GetTotalPaidAmount();
         totalDebt = remainingDebt + totalPaidAmount;
         totalBalance = totalIncome + remainingDebt - totalExpense;
-        totalTransactions = TransactionDao.GetTotalTransactionCount() + DebtDao.GetTotalDebtCount();
+        totalTransactions = TransactionService.GetTotalTransactionCount() + DebtService.GetTotalDebtCount();
 
         chartData = new double[] { (double)totalIncome, (double)totalExpense, (double)totalDebt };
         Series[0].Data = new double[] { (double)highestIncome, (double)highestExpense, (double)highestDebtAmount };
         Series[1].Data = new double[] { (double)lowestIncome, (double)lowestExpense, (double)lowestDebtAmount };
 
-        top5RecentTransactions = TransactionDao.GetTop5RecentTransactions();
+        top5RecentTransactions = TransactionService.GetTop5RecentTransactions();
+        topUpcomingDebts = DebtService.GetTop5UpcomingDebts(5);
     }
 }

@@ -1,5 +1,5 @@
 ﻿@page "/add-transaction"
-@inject TransactionDao TransactionDao
+@inject ITransactionService TransactionService
 @inject CategoryDao CategoryDao
 
 @if (IsVisible)
@@ -84,7 +84,7 @@
 
     private void AddTransaction()
     {
-        TransactionDao.AddTransaction(newTransaction);
+        TransactionService.AddTransaction(newTransaction);
         OnClose.InvokeAsync();
         newTransaction = new Models.Transaction { TransactionDate = DateTime.Now };
     }

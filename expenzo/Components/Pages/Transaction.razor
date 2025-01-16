@@ -1,5 +1,5 @@
 ﻿@page "/transaction"
-@using expenzo.Database
+@using expenzo.Services.Interfaces
 
 <h3>Transaction</h3>
 <div class="d-flex align-items-center mb-3">
@@ -59,11 +59,11 @@
     private string searchTerm = string.Empty;
 
     [Inject]
-    private TransactionDao TransactionDao { get; set; }
+    private ITransactionService TransactionService { get; set; }
 
     protected override void OnInitialized()
     {
-        transactions = TransactionDao.GetTransactions();
+        transactions = TransactionService.GetTransactions();
         filteredTransactions = transactions;
     }
 
@@ -75,7 +75,7 @@
     private void HideAddPopup()
     {
         isAddPopupVisible = false;
-        transactions = TransactionDao.GetTransactions();
+        transactions = TransactionService.GetTransactions();
         ApplyFilter();
     }
 
@@ -88,7 +88,7 @@
     private void HideEditPopup()
     {
         isEditPopupVisible = false;
-        transactions = TransactionDao.GetTransactions();
+        transactions = TransactionService.GetTransactions();
         ApplyFilter();
     }
 
@@ -101,7 +101,7 @@
     private void HideDeletePopup()
     {
         isDeletePopupVisible = false;
-        transactions = TransactionDao.GetTransactions();
+        transactions = TransactionService.GetTransactions();
         ApplyFilter();
     }
 

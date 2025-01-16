@@ -2,6 +2,7 @@ using expenzo.Models;
 using Microsoft.Data.Sqlite;
 using System.Collections.Generic;
 
+
 namespace expenzo.Database
 {
     public class DebtDao
@@ -50,16 +51,33 @@ namespace expenzo.Database
             command.ExecuteNonQuery();
         }
 
+        // public void UpdateDebt(Debt debt)
+        // {
+        //     using var connection = _context.GetConnection();
+        //     connection.Open();
+        //     var command = connection.CreateCommand();
+        //     command.CommandText = "UPDATE Debts SET DebtAmount = @DebtAmount, RemainingAmount = @RemainingAmount, PaidAmount = @PaidAmount, DebtStatus = @DebtStatus WHERE DebtId = @DebtId";
+        //     command.Parameters.AddWithValue("@DebtAmount", debt.DebtAmount);
+        //     command.Parameters.AddWithValue("@RemainingAmount", debt.RemainingAmount);
+        //     command.Parameters.AddWithValue("@PaidAmount", debt.PaidAmount);
+        //     command.Parameters.AddWithValue("@DebtStatus", debt.DebtStatus);
+        //     command.Parameters.AddWithValue("@DebtId", debt.DebtId);
+        //     command.ExecuteNonQuery();
+        // }
+
         public void UpdateDebt(Debt debt)
         {
             using var connection = _context.GetConnection();
             connection.Open();
             var command = connection.CreateCommand();
-            command.CommandText = "UPDATE Debts SET DebtAmount = @DebtAmount, RemainingAmount = @RemainingAmount, PaidAmount = @PaidAmount, DebtStatus = @DebtStatus WHERE DebtId = @DebtId";
+            command.CommandText = "UPDATE Debts SET DebtAmount = @DebtAmount, RemainingAmount = @RemainingAmount, PaidAmount = @PaidAmount, DebtStatus = @DebtStatus, DebtDueDate = @DebtDueDate, DebtSource = @DebtSource, Remark = @Remark WHERE DebtId = @DebtId";
             command.Parameters.AddWithValue("@DebtAmount", debt.DebtAmount);
             command.Parameters.AddWithValue("@RemainingAmount", debt.RemainingAmount);
             command.Parameters.AddWithValue("@PaidAmount", debt.PaidAmount);
             command.Parameters.AddWithValue("@DebtStatus", debt.DebtStatus);
+            command.Parameters.AddWithValue("@DebtDueDate", debt.DebtDueDate);
+            command.Parameters.AddWithValue("@DebtSource", debt.DebtSource);
+            command.Parameters.AddWithValue("@Remark", debt.Remark);
             command.Parameters.AddWithValue("@DebtId", debt.DebtId);
             command.ExecuteNonQuery();
         }
@@ -138,6 +156,38 @@ namespace expenzo.Database
             command.CommandText = "SELECT COUNT(*) FROM Debts";
             var result = command.ExecuteScalar();
             return result != DBNull.Value ? Convert.ToInt32(result) : 0;
+        }
+
+        public void DeleteDebt(int debtId)
+        {
+            using var connection = _context.GetConnection();
+            connection.Open();
+            var command = connection.CreateCommand();
+            command.CommandText = "DELETE FROM Debts WHERE DebtId = @DebtId";
+            command.Parameters.AddWithValue("@DebtId", debtId);
+            command.ExecuteNonQuery();
+        }
+
+        public List<Debt> GetTop5UpcomingDebts(int count)
+        {
+            var debts = new List<Debt>();
+            using var connection = _context.GetConnection();
+            connection.Open();
+            var command = connection.CreateCommand();
+            command.CommandText = "SELECT Remark, RemainingAmount, PaidAmount, DebtDueDate FROM Debts WHERE DebtStatus = 'PendingDebt' ORDER BY DebtDueDate ASC LIMIT @Count";
+            command.Parameters.AddWithValue("@Count", count);
+            using var reader = command.ExecuteReader();
+            while (reader.Read())
+            {
+                debts.Add(new Debt
+                {
+                    Remark = reader.GetString(0),
+                    RemainingAmount = reader.GetDecimal(1),
+                    PaidAmount = reader.GetDecimal(2),
+                    DebtDueDate = reader.GetDateTime(3)
+                });
+            }
+            return debts;
         }
 
     }

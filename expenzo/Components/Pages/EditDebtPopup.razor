@@ -1,4 +1,4 @@
-﻿@page "/add-debt"
+﻿@page "/edit-debt"
 @inject IDebtService DebtService
 
 @if (IsVisible)
@@ -8,48 +8,43 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Add Debt</h5>
+                    <h5 class="modal-title">Edit Debt</h5>
                     <button type="button" class="btn-close" aria-label="Close" @onclick="ClosePopup"></button>
                 </div>
                 <div class="modal-body">
-                    <EditForm Model="newDebt" OnValidSubmit="AddDebt">
+                    <EditForm Model="debtToEdit" OnValidSubmit="UpdateDebt">
                         <DataAnnotationsValidator />
                         <ValidationSummary />
 
                         <div class="form-group">
                             <label for="debtAmount" style="margin-bottom: 5px;">Amount</label>
-                            <InputNumber @bind-Value="newDebt.DebtAmount" class="form-control" id="debtAmount" />
-                            <ValidationMessage For="@(() => newDebt.DebtAmount)" />
-                        </div>
-                        <div class="form-group">
-                            <label for="debtTakenDate" style="margin-bottom: 5px;">Taken Date</label>
-                            <InputDate @bind-Value="newDebt.DebtTakenDate" class="form-control" id="debtTakenDate" readonly />
-                            <ValidationMessage For="@(() => newDebt.DebtTakenDate)" />
+                            <InputNumber @bind-Value="debtToEdit.DebtAmount" class="form-control" id="debtAmount" />
+                            <ValidationMessage For="@(() => debtToEdit.DebtAmount)" />
                         </div>
                         <div class="form-group">
                             <label for="debtDueDate" style="margin-bottom: 5px;">Due Date</label>
-                            <InputDate @bind-Value="newDebt.DebtDueDate" class="form-control" id="debtDueDate" />
-                            <ValidationMessage For="@(() => newDebt.DebtDueDate)" />
+                            <InputDate @bind-Value="debtToEdit.DebtDueDate" class="form-control" id="debtDueDate" />
+                            <ValidationMessage For="@(() => debtToEdit.DebtDueDate)" />
                         </div>
                         <div class="form-group">
                             <label for="debtSource" style="margin-bottom: 5px;">Source</label>
-                            <InputSelect @bind-Value="newDebt.DebtSource" class="form-control" id="debtSource">
+                            <InputSelect @bind-Value="debtToEdit.DebtSource" class="form-control" id="debtSource">
                                 <option value="">Select Source</option>
                                 <option value="Bank">Bank</option>
                                 <option value="Friend">Friend</option>
                                 <option value="Family">Family</option>
                                 <option value="Other">Other</option>
                             </InputSelect>
-                            <ValidationMessage For="@(() => newDebt.DebtSource)" />
+                            <ValidationMessage For="@(() => debtToEdit.DebtSource)" />
                         </div>
                         <div class="form-group">
                             <label for="remark" style="margin-bottom: 5px;">Remark</label>
-                            <InputText @bind-Value="newDebt.Remark" class="form-control" id="remark" />
-                            <ValidationMessage For="@(() => newDebt.Remark)" />
+                            <InputText @bind-Value="debtToEdit.Remark" class="form-control" id="remark" />
+                            <ValidationMessage For="@(() => debtToEdit.Remark)" />
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" @onclick="ClosePopup">Close</button>
-                            <button type="submit" class="btn btn-primary">Add Debt</button>
+                            <button type="submit" class="btn btn-primary">Save Changes</button>
                         </div>
                     </EditForm>
                 </div>
@@ -65,41 +60,35 @@
     [Parameter]
     public EventCallback OnClose { get; set; }
 
-    private Models.Debt newDebt;
-    private int nextDebtId = 1;
+    [Parameter]
+    public Models.Debt DebtToEdit { get; set; }
+
+    private Models.Debt debtToEdit;
 
     protected override void OnParametersSet()
     {
         if (IsVisible)
         {
-            ResetNewDebt();
+            debtToEdit = new Models.Debt
+            {
+                DebtId = DebtToEdit.DebtId,
+                DebtAmount = DebtToEdit.DebtAmount,
+                RemainingAmount = DebtToEdit.RemainingAmount,
+                PaidAmount = DebtToEdit.PaidAmount,
+                DebtTakenDate = DebtToEdit.DebtTakenDate,
+                DebtDueDate = DebtToEdit.DebtDueDate,
+                DebtSource = DebtToEdit.DebtSource,
+                DebtStatus = DebtToEdit.DebtStatus,
+                Remark = DebtToEdit.Remark
+            };
         }
     }
 
-    private void ResetNewDebt()
-    {
-        newDebt = new Models.Debt
-        {
-            DebtTakenDate = DateTime.Now.Date,
-            DebtDueDate = DateTime.Now.Date.AddDays(1),
-            RemainingAmount = 0,
-            PaidAmount = 0
-        };
-    }
-
-   private void AddDebt()
-    {
-        newDebt.DebtId = nextDebtId++;
-        newDebt.RemainingAmount = newDebt.DebtAmount;
-
-        if (newDebt.DebtDueDate <= DateTime.Now.Date)
-        {
-            return;
-        }
-
-        DebtService.AddDebt(newDebt);
-        ClosePopup();
-    }
+    private void UpdateDebt()
+{
+    DebtService.UpdateDebt(debtToEdit);
+    ClosePopup();
+}
 
     private void ClosePopup()
     {

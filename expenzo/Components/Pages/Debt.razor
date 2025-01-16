@@ -1,17 +1,20 @@
 ﻿@page "/debt"
+@inject IDebtService DebtService
 
 <h3>Debt</h3>
 <div style="display: flex; justify-content: space-between; align-items: center;">
     <div style="flex-grow: 1;">
         <input type="text" @bind="searchTerm" placeholder="Search by Remark" class="form-control" style="display:inline-block; width:60%; margin-right:5px;" />
         <button class="btn btn-secondary" @onclick="SearchDebts" style="margin-right:5px;">Search</button>
-        <button class="btn btn-secondary" @onclick="ShowFilterDebtPopup" style="margin-right:5px;">Filter Debts</button>
+        <button class="btn btn-secondary" @onclick="ShowFilterDebtPopup" style="margin-right:3px;">Filter Debts</button>
         <button class="btn btn-primary" @onclick="ShowAddDebtPopup">Add Debt</button>
     </div>
 </div>
 <AddDebtPopup IsVisible="isAddDebtPopupVisible" OnClose="HideAddDebtPopup" />
+<EditDebtPopup IsVisible="isEditDebtPopupVisible" OnClose="HideEditDebtPopup" DebtToEdit="selectedDebt" />
 <PayDebtPopup IsVisible="isPayDebtPopupVisible" OnClose="HidePayDebtPopup" SelectedDebt="selectedDebt" />
 <FilterDebtPopup IsVisible="isFilterDebtPopupVisible" OnClose="HideFilterDebtPopup" OnFilter="ApplyFilter" />
+<DeleteDebtPopup IsVisible="isDeleteDebtPopupVisible" OnClose="HideDeleteDebtPopup" OnDelete="DeleteDebt" DebtToDelete="selectedDebt" />
 
 <table class="table mt-3">
     <thead>
@@ -42,7 +45,12 @@
                 <td>@(debt.DebtStatus == "PaidDebts" ? "Paid Debts" : "Pending Debt")</td>
                 <td>@debt.Remark</td>
                 <td>
-                    <button class="btn btn-primary" @onclick="() => ShowPayDebtPopup(debt)">Pay</button>
+                    @if (debt.DebtStatus == "PendingDebt")
+                    {
+                        <button class="btn btn-secondary" @onclick="() => ShowEditDebtPopup(debt)">Edit</button>
+                        <button class="btn btn-primary" @onclick="() => ShowPayDebtPopup(debt)">Pay</button>
+                    }
+                    <button class="btn btn-danger ms-2" @onclick="() => ShowDeleteDebtPopup(debt)">Delete</button>
                 </td>
             </tr>
         }
@@ -52,19 +60,19 @@
 @code
 {
     private bool isAddDebtPopupVisible = false;
+    private bool isEditDebtPopupVisible = false;
     private bool isPayDebtPopupVisible = false;
     private bool isFilterDebtPopupVisible = false;
+    private bool isDeleteDebtPopupVisible = false;
     private List<Models.Debt> debts = new List<Models.Debt>();
     private Models.Debt? selectedDebt;
     private string? searchTerm;
 
-    [Inject]
-    private DebtDao DebtDao { get; set; }
-
     protected override void OnInitialized()
     {
-        debts = DebtDao.GetDebts();
+        debts = DebtService.GetDebts();
     }
+
 
     private void ShowAddDebtPopup()
     {
@@ -74,7 +82,20 @@
     private void HideAddDebtPopup()
     {
         isAddDebtPopupVisible = false;
-        debts = DebtDao.GetDebts();
+        debts = DebtService.GetDebts();
+    }
+
+
+    private void ShowEditDebtPopup(Models.Debt debt)
+    {
+        selectedDebt = debt;
+        isEditDebtPopupVisible = true;
+    }
+
+    private void HideEditDebtPopup()
+    {
+        isEditDebtPopupVisible = false;
+        debts = DebtService.GetDebts();
     }
 
     private void ShowPayDebtPopup(Models.Debt debt)
@@ -98,20 +119,42 @@
         isFilterDebtPopupVisible = false;
     }
 
+    private void ShowDeleteDebtPopup(Models.Debt debt)
+    {
+        selectedDebt = debt;
+        isDeleteDebtPopupVisible = true;
+    }
+
+    private void HideDeleteDebtPopup()
+    {
+        isDeleteDebtPopupVisible = false;
+    }
+
+   private void DeleteDebt()
+    {
+        if (selectedDebt != null)
+        {
+            DebtService.DeleteDebt(selectedDebt.DebtId);
+            debts = DebtService.GetDebts();
+            isDeleteDebtPopupVisible = false;
+        }
+    }
+
+
     private void ApplyFilter(List<Models.Debt> filteredDebts)
     {
         debts = filteredDebts;
     }
 
-    private void SearchDebts()
+   private void SearchDebts()
+{
+    if (!string.IsNullOrEmpty(searchTerm))
     {
-        if (!string.IsNullOrEmpty(searchTerm))
-        {
-            debts = DebtDao.GetDebts().Where(d => d.Remark.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)).ToList();
-        }
-        else
-        {
-            debts = DebtDao.GetDebts();
-        }
+        debts = DebtService.GetDebts().Where(d => d.Remark.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)).ToList();
     }
+    else
+    {
+        debts = DebtService.GetDebts();
+    }
+}
 }

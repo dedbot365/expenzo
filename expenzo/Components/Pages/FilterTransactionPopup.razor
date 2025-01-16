@@ -1,6 +1,68 @@
 ﻿@page "/filter-transaction-popup"
-@inject TransactionDao TransactionDao
+@inject ITransactionService TransactionService
 @inject CategoryDao CategoryDao
+
+@if (IsVisible)
+{
+    <div class="modal-backdrop fade show"></div>
+    <div class="modal" style="display:block;">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Filter Transactions</h5>
+                    <button type="button" class="btn-close" aria-label="Close" @onclick="() => OnClose.InvokeAsync()"></button>
+                </div>
+                <div class="modal-body">
+                    <EditForm Model="this" OnValidSubmit="ApplyFilter">
+                        <DataAnnotationsValidator />
+                        <ValidationSummary />
+
+                        <div class="mb-3">
+                            <label for="amountMin" class="form-label">Minimum Amount:</label>
+                            <InputNumber id="amountMin" class="form-control" @bind-Value="amountMin" />
+                        </div>
+                        <div class="mb-3">
+                            <label for="amountMax" class="form-label">Maximum Amount:</label>
+                            <InputNumber id="amountMax" class="form-control" @bind-Value="amountMax" />
+                        </div>
+                        <div class="mb-3">
+                            <label for="selectedType" class="form-label">Type:</label>
+                            <InputSelect id="selectedType" class="form-control" @bind-Value="selectedType">
+                                <option value="">All</option>
+                                @foreach (var type in types)
+                                {
+                                    <option value="@type">@type</option>
+                                }
+                            </InputSelect>
+                        </div>
+                        <div class="mb-3">
+                            <label for="selectedCategory" class="form-label">Category:</label>
+                            <InputSelect id="selectedCategory" class="form-control" @bind-Value="selectedCategory">
+                                <option value="">All</option>
+                                @foreach (var category in categories)
+                                {
+                                    <option value="@category">@category</option>
+                                }
+                            </InputSelect>
+                        </div>
+                        <div class="mb-3">
+                            <label for="dateStart" class="form-label">Start Date:</label>
+                            <InputDate id="dateStart" class="form-control" @bind-Value="dateStart" />
+                        </div>
+                        <div class="mb-3">
+                            <label for="dateEnd" class="form-label">End Date:</label>
+                            <InputDate id="dateEnd" class="form-control" @bind-Value="dateEnd" />
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" @onclick="() => OnClose.InvokeAsync()">Cancel</button>
+                            <button type="submit" class="btn btn-primary">Apply Filter</button>
+                        </div>
+                    </EditForm>
+                </div>
+            </div>
+        </div>
+    </div>
+}
 
 @code {
     [Parameter]
@@ -28,7 +90,7 @@
 
     private void ApplyFilter()
     {
-        var filteredTransactions = TransactionDao.GetTransactions().Where(transaction =>
+        var filteredTransactions = TransactionService.GetTransactions().Where(transaction =>
             (!amountMin.HasValue || transaction.Amount >= amountMin.Value) &&
             (!amountMax.HasValue || transaction.Amount <= amountMax.Value) &&
             (string.IsNullOrEmpty(selectedType) || transaction.Type.Equals(selectedType, StringComparison.OrdinalIgnoreCase)) &&
@@ -40,70 +102,4 @@
         OnFilter.InvokeAsync(filteredTransactions);
         OnClose.InvokeAsync();
     }
-
-    private void ClearFilter()
-    {
-        amountMin = null;
-        amountMax = null;
-        selectedType = string.Empty;
-        selectedCategory = string.Empty;
-        dateStart = null;
-        dateEnd = null;
-    }
-}
-
-@if (IsVisible)
-{
-    <div class="modal d-block" tabindex="-1" style="background-color: rgba(0, 0, 0, 0.5);">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Filter Transactions</h5>
-                    <button type="button" class="btn-close" aria-label="Close" @onclick="() => OnClose.InvokeAsync()"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="mb-3">
-                        <label for="amountMin" class="form-label">Minimum Amount:</label>
-                        <input type="number" id="amountMin" class="form-control" @bind="amountMin" />
-                    </div>
-                    <div class="mb-3">
-                        <label for="amountMax" class="form-label">Maximum Amount:</label>
-                        <input type="number" id="amountMax" class="form-control" @bind="amountMax" />
-                    </div>
-                    <div class="mb-3">
-                        <label for="selectedType" class="form-label">Type:</label>
-                        <select id="selectedType" class="form-control" @bind="selectedType">
-                            <option value="">All</option>
-                            @foreach (var type in types)
-                            {
-                                <option value="@type">@type</option>
-                            }
-                        </select>
-                    </div>
-                    <div class="mb-3">
-                        <label for="selectedCategory" class="form-label">Category:</label>
-                        <select id="selectedCategory" class="form-control" @bind="selectedCategory">
-                            <option value="">All</option>
-                            @foreach (var category in categories)
-                            {
-                                <option value="@category">@category</option>
-                            }
-                        </select>
-                    </div>
-                    <div class="mb-3">
-                        <label for="dateStart" class="form-label">Start Date:</label>
-                        <input type="date" id="dateStart" class="form-control" @bind="dateStart" />
-                    </div>
-                    <div class="mb-3">
-                        <label for="dateEnd" class="form-label">End Date:</label>
-                        <input type="date" id="dateEnd" class="form-control" @bind="dateEnd" />
-                    </div>
-                    <div class="d-flex justify-content-end">
-                        <button class="btn btn-secondary me-2" @onclick="ClearFilter">Clear Filter</button>
-                        <button class="btn btn-primary" @onclick="ApplyFilter">Apply Filter</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
 }

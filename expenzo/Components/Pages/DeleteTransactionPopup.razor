@@ -1,4 +1,5 @@
 ﻿@page "/delete-transaction"
+@inject ITransactionService TransactionService
 
 @if (IsVisible)
 {
@@ -32,12 +33,9 @@
     [Parameter]
     public int TransactionId { get; set; }
 
-    [Inject]
-    private TransactionDao TransactionDao { get; set; }
-
     private void DeleteTransaction()
     {
-        TransactionDao.DeleteTransaction(TransactionId);
+        TransactionService.DeleteTransaction(TransactionId);
         OnClose.InvokeAsync();
     }
 }
