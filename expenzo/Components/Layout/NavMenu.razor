@@ -1,4 +1,6 @@
-﻿<div class="top-row ps-3 navbar navbar-dark">
+﻿@inject AuthenticationStateService authStateService
+@inject NavigationManager Navigation
+<div class="top-row ps-3 navbar navbar-dark">
     <div class="container-fluid">
         <a class="navbar-brand" href="">expenzo</a>
     </div>
@@ -40,5 +42,19 @@
                 <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Edit User
             </NavLink>
         </div>
+
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="" @onclick="Logout">
+                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Logout
+            </NavLink>
+        </div>
     </nav>
 </div>
+
+@code {
+    private void Logout()
+    {
+        authStateService.Logout();
+        Navigation.NavigateTo("/");
+    }
+}
