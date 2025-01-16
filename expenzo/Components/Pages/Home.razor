@@ -45,6 +45,20 @@
     
     .mud-chart-line {
         overflow: visible;
+    }
+    .text-white th, .text-white td {
+        color: white;
+    }
+     .table-custom-width {
+        width: 50%; 
+        margin: 0 auto; 
+    }
+    .table-custom-padding td {
+        padding: 23px; 
+    }
+    .text-white th, .text-white td {
+        color: white;
+    }
    
 </style>
 
@@ -101,52 +115,52 @@
 </div>
 
 <div class="row">
-    <div class="col-md-6">
-        <div class="dashboard-card bg-blue text-white text-center">
-            <h3>Income, Expense & Debt Chart</h3>
-            <MudPaper Class="pa-4">
-                <MudChart ChartType="ChartType.Pie" InputData="@chartData" InputLabels="@chartLabels" Width="300px" Height="300px" />
-            </MudPaper>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="dashboard-card bg-blue text-white text-center">
+                <h3>Income, Expense & Debt Chart</h3>
+                <MudPaper Class="pa-4">
+                    <MudChart ChartType="ChartType.Pie" InputData="@chartData" InputLabels="@chartLabels" Width="300px" Height="300px" />
+                </MudPaper>
+            </div>
         </div>
+       <div class="col-md-6">
+            <div class="dashboard-card bg-purple text-white text-center">
+                <h3>Top 5 Recent Transactions</h3>
+                <table class="table table-striped mt-3 text-white table-custom-width table-custom-padding">
+                    <thead>
+                        <tr>
+                            <th>Title</th>
+                            <th>Amount</th>
+                            <th>Type</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var transaction in top5RecentTransactions)
+                        {
+                            <tr>
+                                <td>@transaction.Title</td>
+                                <td>@transaction.Amount</td>
+                                <td>@transaction.Type</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    
+
     </div>
-    <div class="col-md-12">
-    <div class="dashboard-card bg-lightorange text-white text-center">
-        <h3>Financial Overview</h3>
-        <MudPaper Class="pa-4">
-            <MudChart Class="custom-chart" ChartType="ChartType.Bar" ChartSeries="@Series" XAxisLabels="@XAxisLabels" Width="100%" Height="800px" LabelFormat="0" />
-        </MudPaper>
+        <div class="col-md-12">
+            <div class="dashboard-card bg-lightorange text-white text-center">
+                <h3>Financial Overview</h3>
+                <MudPaper Class="pa-4">
+                    <MudChart Class="custom-chart" ChartType="ChartType.Bar" ChartSeries="@Series" XAxisLabels="@XAxisLabels" Width="100%" Height="800px" LabelFormat="0" />
+                </MudPaper>
+            </div>
     </div>
-</div>
 </div>
 
-<div class="row">
-    <div class="col-md-12">
-        <div class="dashboard-card bg-lightorange text-white text-center">
-            <h3>Top 5 Recent Transactions</h3>
-            <table class="table table-striped mt-3">
-                <thead>
-                    <tr>
-                        <th>Id</th>
-                        <th>Title</th>
-                        <th>Amount</th>
-                        <th>Type</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var transaction in top5RecentTransactions)
-                    {
-                        <tr>
-                            <td>@transaction.TransactionId</td>
-                            <td>@transaction.Title</td>
-                            <td>@transaction.Amount</td>
-                            <td>@transaction.Type</td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
-        </div>
-    </div>
-</div>
 
 
 

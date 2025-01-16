@@ -173,16 +173,15 @@ namespace expenzo.Database
             using var connection = _context.GetConnection();
             connection.Open();
             var command = connection.CreateCommand();
-            command.CommandText = "SELECT TransactionId, Title, Amount, Type FROM Transactions ORDER BY TransactionDate DESC LIMIT 5";
+            command.CommandText = "SELECT Title, Amount, Type FROM Transactions ORDER BY TransactionDate DESC LIMIT 5";
             using var reader = command.ExecuteReader();
             while (reader.Read())
             {
                 transactions.Add(new Transaction
                 {
-                    TransactionId = reader.GetInt32(0),
-                    Title = reader.GetString(1),
-                    Amount = reader.GetDecimal(2),
-                    Type = reader.GetString(3)
+                    Title = reader.GetString(0),
+                    Amount = reader.GetDecimal(1),
+                    Type = reader.GetString(2)
                 });
             }
             return transactions;
