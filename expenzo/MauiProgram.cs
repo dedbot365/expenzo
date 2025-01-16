@@ -28,6 +28,7 @@ namespace expenzo
             builder.Services.AddSingleton<TransactionDao>();
             builder.Services.AddSingleton<IUserService, UserService>();
             builder.Services.AddSingleton<ICategoryService, CategoryService>();
+            builder.Services.AddSingleton<ITransactionService, TransactionService>();
             builder.Services.AddSingleton<AuthenticationStateService>();
             builder.Services.AddSingleton<EncryptionService>();
 

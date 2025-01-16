@@ -1,5 +1,5 @@
 ﻿@page "/edit-transaction"
-@inject TransactionDao TransactionDao
+@inject ITransactionService TransactionService
 @inject CategoryDao CategoryDao
 
 @if (IsVisible)
@@ -84,7 +84,7 @@
 
     private void UpdateTransaction()
     {
-        TransactionDao.UpdateTransaction(TransactionToEdit);
+        TransactionService.UpdateTransaction(TransactionToEdit);
         OnClose.InvokeAsync();
     }
 }
