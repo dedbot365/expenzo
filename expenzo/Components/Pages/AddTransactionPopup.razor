@@ -1,6 +1,8 @@
 ﻿@page "/add-transaction"
+@using expenzo.Services.Interfaces
 @inject ITransactionService TransactionService
-@inject CategoryDao CategoryDao
+@inject IDebtService DebtService
+@inject ICategoryService CategoryService
 
 @if (IsVisible)
 {
@@ -13,6 +15,10 @@
                     <button type="button" class="btn-close" aria-label="Close" @onclick="() => OnClose.InvokeAsync()"></button>
                 </div>
                 <div class="modal-body">
+                    @if (!string.IsNullOrEmpty(message))
+                    {
+                        <div class="@messageClass">@message</div>
+                    }
                     <EditForm Model="newTransaction" OnValidSubmit="AddTransaction">
                         <DataAnnotationsValidator />
                         <ValidationSummary />
@@ -27,7 +33,7 @@
                             <InputNumber id="transactionAmount" class="form-control" @bind-Value="newTransaction.Amount" />
                             <ValidationMessage For="@(() => newTransaction.Amount)" />
                         </div>
-                       <div class="mb-3">
+                        <div class="mb-3">
                             <label for="transactionType" class="form-label">Type:</label>
                             <InputSelect id="transactionType" class="form-control" @bind-Value="newTransaction.Type">
                                 <option value="" disabled selected>Select the Transaction Type</option>
@@ -76,16 +82,35 @@
 
     private Models.Transaction newTransaction = new Models.Transaction { TransactionDate = DateTime.Now };
     private List<Models.Category> categories = new List<Models.Category>();
+    private string message = string.Empty;
+    private string messageClass = string.Empty;
 
     protected override void OnInitialized()
     {
-        categories = CategoryDao.GetCategories();
+        categories = CategoryService.GetCategories();
     }
 
     private void AddTransaction()
     {
+        if (newTransaction.Type == "Expense")
+        {
+            var totalIncome = TransactionService.GetTotalIncomeAmount();
+            var totalRemainingDebts = DebtService.GetTotalDebtRemainingAmount();
+            var totalExpense = TransactionService.GetTotalExpenseAmount();
+
+            if ((totalIncome + totalRemainingDebts - totalExpense) < newTransaction.Amount)
+            {
+                message = "Insufficient balance to add this expense.";
+                messageClass = "alert alert-danger";
+                return;
+            }
+        }
+
         TransactionService.AddTransaction(newTransaction);
-        OnClose.InvokeAsync();
+        message = "Transaction added successfully.";
+        messageClass = "alert alert-success";
+
+        // Reset the form
         newTransaction = new Models.Transaction { TransactionDate = DateTime.Now };
     }
 }

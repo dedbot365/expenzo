@@ -1,6 +1,8 @@
 ﻿@page "/edit-transaction"
+@using expenzo.Services.Interfaces
 @inject ITransactionService TransactionService
-@inject CategoryDao CategoryDao
+@inject IDebtService DebtService
+@inject ICategoryService CategoryService
 
 @if (IsVisible)
 {
@@ -13,6 +15,10 @@
                     <button type="button" class="btn-close" aria-label="Close" @onclick="() => OnClose.InvokeAsync()"></button>
                 </div>
                 <div class="modal-body">
+                    @if (!string.IsNullOrEmpty(message))
+                    {
+                        <div class="@messageClass">@message</div>
+                    }
                     <EditForm Model="TransactionToEdit" OnValidSubmit="UpdateTransaction">
                         <DataAnnotationsValidator />
                         <ValidationSummary />
@@ -54,7 +60,7 @@
                             <label for="transactionRemarks" class="form-label">Remarks:</label>
                             <InputTextArea id="transactionRemarks" class="form-control" @bind-Value="TransactionToEdit.Remarks" />
                         </div>
-                        <div class="modal-footer">                            
+                        <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" @onclick="() => OnClose.InvokeAsync()">Cancel</button>
                             <button type="submit" class="btn btn-primary">Save Changes</button>
                         </div>
@@ -76,15 +82,50 @@
     public Models.Transaction TransactionToEdit { get; set; }
 
     private List<Models.Category> categories = new List<Models.Category>();
+    private string message = string.Empty;
+    private string messageClass = string.Empty;
 
     protected override void OnInitialized()
     {
-        categories = CategoryDao.GetCategories();
+        categories = CategoryService.GetCategories();
     }
 
     private void UpdateTransaction()
     {
+        var originalTransaction = TransactionService.GetTransactions().FirstOrDefault(t => t.TransactionId == TransactionToEdit.TransactionId);
+
+        if (originalTransaction != null && originalTransaction.Type == "Income" && TransactionToEdit.Type == "Expense")
+        {
+            var totalIncome = TransactionService.GetTotalIncomeAmount() - originalTransaction.Amount;
+            var totalRemainingDebts = DebtService.GetTotalDebtRemainingAmount();
+            var totalExpense = TransactionService.GetTotalExpenseAmount();
+
+            if ((totalIncome + totalRemainingDebts - totalExpense) < TransactionToEdit.Amount)
+            {
+                message = "Insufficient balance to update this expense.";
+                messageClass = "alert alert-danger";
+                return;
+            }
+        }
+        else if (TransactionToEdit.Type == "Expense")
+        {
+            var totalIncome = TransactionService.GetTotalIncomeAmount();
+            var totalRemainingDebts = DebtService.GetTotalDebtRemainingAmount();
+            var totalExpense = TransactionService.GetTotalExpenseAmount();
+
+            if ((totalIncome + totalRemainingDebts - totalExpense) < TransactionToEdit.Amount)
+            {
+                message = "Insufficient balance to update this expense.";
+                messageClass = "alert alert-danger";
+                return;
+            }
+        }
+
         TransactionService.UpdateTransaction(TransactionToEdit);
-        OnClose.InvokeAsync();
+        message = "Transaction updated successfully.";
+        messageClass = "alert alert-success";
+
+        // Reset the form
+        TransactionToEdit = new Models.Transaction { TransactionDate = DateTime.Now };
     }
 }

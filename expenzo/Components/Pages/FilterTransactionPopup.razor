@@ -1,6 +1,6 @@
 ﻿@page "/filter-transaction-popup"
 @inject ITransactionService TransactionService
-@inject CategoryDao CategoryDao
+@inject ICategoryService CategoryService
 
 @if (IsVisible)
 {
@@ -85,7 +85,7 @@
 
     protected override void OnInitialized()
     {
-        categories = CategoryDao.GetCategories().Select(c => c.Name).ToList();
+        categories = CategoryService.GetCategories().Select(c => c.Name).ToList();
     }
 
     private void ApplyFilter()
