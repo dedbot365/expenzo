@@ -89,5 +89,56 @@ namespace expenzo.Database
             }
             return debts;
         }
+
+        public decimal GetTotalDebtRemainingAmount()
+        {
+            using var connection = _context.GetConnection();
+            connection.Open();
+            var command = connection.CreateCommand();
+            command.CommandText = "SELECT SUM(RemainingAmount) FROM Debts";
+            var result = command.ExecuteScalar();
+            return result != DBNull.Value ? Convert.ToDecimal(result) : 0;
+        }
+
+        public decimal GetTotalPaidAmount()
+        {
+            using var connection = _context.GetConnection();
+            connection.Open();
+            var command = connection.CreateCommand();
+            command.CommandText = "SELECT SUM(PaidAmount) FROM Debts";
+            var result = command.ExecuteScalar();
+            return result != DBNull.Value ? Convert.ToDecimal(result) : 0;
+        }
+
+        public decimal GetHighestDebtAmount()
+        {
+            using var connection = _context.GetConnection();
+            connection.Open();
+            var command = connection.CreateCommand();
+            command.CommandText = "SELECT MAX(DebtAmount) FROM Debts";
+            var result = command.ExecuteScalar();
+            return result != DBNull.Value ? Convert.ToDecimal(result) : 0;
+        }
+
+        public decimal GetLowestDebtAmount()
+        {
+            using var connection = _context.GetConnection();
+            connection.Open();
+            var command = connection.CreateCommand();
+            command.CommandText = "SELECT MIN(DebtAmount) FROM Debts";
+            var result = command.ExecuteScalar();
+            return result != DBNull.Value ? Convert.ToDecimal(result) : 0;
+        }
+
+        public int GetTotalDebtCount()
+        {
+            using var connection = _context.GetConnection();
+            connection.Open();
+            var command = connection.CreateCommand();
+            command.CommandText = "SELECT COUNT(*) FROM Debts";
+            var result = command.ExecuteScalar();
+            return result != DBNull.Value ? Convert.ToInt32(result) : 0;
+        }
+
     }
 }

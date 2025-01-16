@@ -1,6 +1,7 @@
 using expenzo.Models;
 using Microsoft.Data.Sqlite;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace expenzo.Database
 {
@@ -95,5 +96,98 @@ namespace expenzo.Database
             }
             return transactions;
         }
+
+        public decimal GetTotalIncomeAmount()
+        {
+            using var connection = _context.GetConnection();
+            connection.Open();
+            var command = connection.CreateCommand();
+            command.CommandText = "SELECT SUM(Amount) FROM Transactions WHERE Type = 'Income'";
+            var result = command.ExecuteScalar();
+            return result != DBNull.Value ? Convert.ToDecimal(result) : 0;
+        }
+
+        public decimal GetTotalExpenseAmount()
+        {
+            using var connection = _context.GetConnection();
+            connection.Open();
+            var command = connection.CreateCommand();
+            command.CommandText = "SELECT SUM(Amount) FROM Transactions WHERE Type = 'Expense'";
+            var result = command.ExecuteScalar();
+            return result != DBNull.Value ? Convert.ToDecimal(result) : 0;
+        }
+
+        public decimal GetHighestIncomeAmount()
+        {
+            using var connection = _context.GetConnection();
+            connection.Open();
+            var command = connection.CreateCommand();
+            command.CommandText = "SELECT MAX(Amount) FROM Transactions WHERE Type = 'Income'";
+            var result = command.ExecuteScalar();
+            return result != DBNull.Value ? Convert.ToDecimal(result) : 0;
+        }
+
+        public decimal GetLowestIncomeAmount()
+        {
+            using var connection = _context.GetConnection();
+            connection.Open();
+            var command = connection.CreateCommand();
+            command.CommandText = "SELECT MIN(Amount) FROM Transactions WHERE Type = 'Income'";
+            var result = command.ExecuteScalar();
+            return result != DBNull.Value ? Convert.ToDecimal(result) : 0;
+        }
+
+        public decimal GetHighestExpenseAmount()
+        {
+            using var connection = _context.GetConnection();
+            connection.Open();
+            var command = connection.CreateCommand();
+            command.CommandText = "SELECT MAX(Amount) FROM Transactions WHERE Type = 'Expense'";
+            var result = command.ExecuteScalar();
+            return result != DBNull.Value ? Convert.ToDecimal(result) : 0;
+        }
+
+        public decimal GetLowestExpenseAmount()
+        {
+            using var connection = _context.GetConnection();
+            connection.Open();
+            var command = connection.CreateCommand();
+            command.CommandText = "SELECT MIN(Amount) FROM Transactions WHERE Type = 'Expense'";
+            var result = command.ExecuteScalar();
+            return result != DBNull.Value ? Convert.ToDecimal(result) : 0;
+        }
+
+        public int GetTotalTransactionCount()
+        {
+            using var connection = _context.GetConnection();
+            connection.Open();
+            var command = connection.CreateCommand();
+            command.CommandText = "SELECT COUNT(*) FROM Transactions";
+            var result = command.ExecuteScalar();
+            return result != DBNull.Value ? Convert.ToInt32(result) : 0;
+        }
+
+        public List<Transaction> GetTop5RecentTransactions()
+        {
+            var transactions = new List<Transaction>();
+            using var connection = _context.GetConnection();
+            connection.Open();
+            var command = connection.CreateCommand();
+            command.CommandText = "SELECT Title, Amount, Type FROM Transactions ORDER BY TransactionDate DESC LIMIT 5";
+            using var reader = command.ExecuteReader();
+            while (reader.Read())
+            {
+                transactions.Add(new Transaction
+                {
+                    Title = reader.GetString(0),
+                    Amount = reader.GetDecimal(1),
+                    Type = reader.GetString(2)
+                });
+            }
+            return transactions;
+        }
+
+
+
     }
 }

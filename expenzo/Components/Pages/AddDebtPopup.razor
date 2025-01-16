@@ -11,36 +11,46 @@
                     <button type="button" class="btn-close" aria-label="Close" @onclick="ClosePopup"></button>
                 </div>
                 <div class="modal-body">
-                    <div class="form-group">
-                        <label for="debtAmount" style="margin-bottom: 5px;">Amount</label>
-                        <input type="number" @bind="newDebt.DebtAmount" class="form-control" id="debtAmount" />
-                    </div>
-                    <div class="form-group">
-                        <label for="debtTakenDate" style="margin-bottom: 5px;">Taken Date</label>
-                        <input type="date" @bind="newDebt.DebtTakenDate" class="form-control" id="debtTakenDate" readonly />
-                    </div>
-                    <div class="form-group">
-                        <label for="debtDueDate" style="margin-bottom: 5px;">Due Date</label>
-                        <input type="date" @bind="newDebt.DebtDueDate" class="form-control" id="debtDueDate" />
-                    </div>
-                    <div class="form-group">
-                        <label for="debtSource" style="margin-bottom: 5px;">Source</label>
-                        <select @bind="newDebt.DebtSource" class="form-control" id="debtSource">
-                            <option value="">Select Source</option>
-                            <option value="Bank">Bank</option>
-                            <option value="Friend">Friend</option>
-                            <option value="Family">Family</option>
-                            <option value="Other">Other</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="remark" style="margin-bottom: 5px;">Remark</label>
-                        <input type="text" @bind="newDebt.Remark" class="form-control" id="remark" />
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" @onclick="ClosePopup">Close</button>
-                    <button type="button" class="btn btn-primary" @onclick="AddDebt">Add Debt</button>
+                    <EditForm Model="newDebt" OnValidSubmit="AddDebt">
+                        <DataAnnotationsValidator />
+                        <ValidationSummary />
+
+                        <div class="form-group">
+                            <label for="debtAmount" style="margin-bottom: 5px;">Amount</label>
+                            <InputNumber @bind-Value="newDebt.DebtAmount" class="form-control" id="debtAmount" />
+                            <ValidationMessage For="@(() => newDebt.DebtAmount)" />
+                        </div>
+                        <div class="form-group">
+                            <label for="debtTakenDate" style="margin-bottom: 5px;">Taken Date</label>
+                            <InputDate @bind-Value="newDebt.DebtTakenDate" class="form-control" id="debtTakenDate" readonly />
+                            <ValidationMessage For="@(() => newDebt.DebtTakenDate)" />
+                        </div>
+                        <div class="form-group">
+                            <label for="debtDueDate" style="margin-bottom: 5px;">Due Date</label>
+                            <InputDate @bind-Value="newDebt.DebtDueDate" class="form-control" id="debtDueDate" />
+                            <ValidationMessage For="@(() => newDebt.DebtDueDate)" />
+                        </div>
+                        <div class="form-group">
+                            <label for="debtSource" style="margin-bottom: 5px;">Source</label>
+                            <InputSelect @bind-Value="newDebt.DebtSource" class="form-control" id="debtSource">
+                                <option value="">Select Source</option>
+                                <option value="Bank">Bank</option>
+                                <option value="Friend">Friend</option>
+                                <option value="Family">Family</option>
+                                <option value="Other">Other</option>
+                            </InputSelect>
+                            <ValidationMessage For="@(() => newDebt.DebtSource)" />
+                        </div>
+                        <div class="form-group">
+                            <label for="remark" style="margin-bottom: 5px;">Remark</label>
+                            <InputText @bind-Value="newDebt.Remark" class="form-control" id="remark" />
+                            <ValidationMessage For="@(() => newDebt.Remark)" />
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" @onclick="ClosePopup">Close</button>
+                            <button type="submit" class="btn btn-primary">Add Debt</button>
+                        </div>
+                    </EditForm>
                 </div>
             </div>
         </div>

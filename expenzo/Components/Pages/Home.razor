@@ -1,5 +1,218 @@
-﻿@* @page "/" *@
+﻿@page "/home"
+@inject DebtDao DebtDao
+@inject TransactionDao TransactionDao
+@using MudBlazor
+<h3>Dashboard</h3>
+<style>
+    .bg-blue {
+        background-color: navy;
+    }
+    .bg-purple {
+        background-color: purple;
+    }
+    .bg-lilac {
+        background-color: #826387;
+    }
+    .bg-orangered {
+        background-color: orangered;
+    }
 
-@* <h1>Hello, world!</h1> *@
+    .bg-lightorange {
+        background-color:#E2725B ;
+    }
+    
+    .bg-aubergine {
+        background-color: #372528;
+    }
+    .dashboard-card {
+        border-radius: 15px; 
+        padding: 20px; 
+        margin:10px;
+        box-shadow: 2px 2px 5px 2px rgba(0, 0, 0, 0.2);
+        }
 
-@* Welcome to your new app. *@
+    .mud-chart-container .mud-chart-bar-group {
+        gap: 5px; 
+    }
+    .custom-chart .mud-chart-axis text,
+    .custom-chart .mud-chart-title,
+    .custom-chart .mud-chart-legend text {
+        fill: white !important;
+        color: white !important;
+    }
+    .mud-chart-container .mud-chart-axis-labels text {
+        transform: translateY(-10px); }
+    
+    .mud-chart-line {
+        overflow: visible;
+    }
+    .text-white th, .text-white td {
+        color: white;
+    }
+     .table-custom-width {
+        width: 50%; 
+        margin: 0 auto; 
+    }
+    .table-custom-padding td {
+        padding: 23px; 
+    }
+    .text-white th, .text-white td {
+        color: white;
+    }
+   
+</style>
+
+<div class="row">
+    <div class="col-md-4">
+        <div class="dashboard-card bg-aubergine text-white text-center">
+            <h3>No of Transactions:</h3>
+            <h3>@totalTransactions</h3>
+            <br/>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="dashboard-card bg-success text-white text-center">
+            <h3>Total Balance:</h3>
+            <h3>@totalBalance</h3>
+            <br/>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="dashboard-card bg-blue text-white text-center">
+            <h3>Income: @totalIncome</h3><br/>
+            <h7>Highest Income: @highestIncome</h7> <br/>
+            <h7>Lowest Income: @lowestIncome</h7>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="dashboard-card bg-danger text-white text-center">
+            <h3>Expense: @totalExpense</h3><br/>
+            <h7>Highest Expense: @highestExpense</h7><br/>
+            <h7>Lowest Expense: @lowestExpense</h7>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="dashboard-card bg-orangered text-white text-center">
+            <h3>Total Debt: @totalDebt</h3><br/>
+            <h7>Highest Debt: @highestDebtAmount</h7><br/>
+            <h7>Lowest Debt: @lowestDebtAmount</h7>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="dashboard-card bg-purple text-white text-center">
+            <h3>Paid Debts:</h3>
+            <h3>@totalPaidAmount</h3><br/>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="dashboard-card bg-lilac text-white text-center">
+            <h3>Pending Debts</h3>
+            <h3>@remainingDebt</h3><br/>
+        </div>
+    </div> 
+</div>
+
+<div class="row">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="dashboard-card bg-blue text-white text-center">
+                <h3>Income, Expense & Debt Chart</h3>
+                <MudPaper Class="pa-4">
+                    <MudChart ChartType="ChartType.Pie" InputData="@chartData" InputLabels="@chartLabels" Width="300px" Height="300px" />
+                </MudPaper>
+            </div>
+        </div>
+       <div class="col-md-6">
+            <div class="dashboard-card bg-purple text-white text-center">
+                <h3>Top 5 Recent Transactions</h3>
+                <table class="table table-striped mt-3 text-white table-custom-width table-custom-padding">
+                    <thead>
+                        <tr>
+                            <th>Title</th>
+                            <th>Amount</th>
+                            <th>Type</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var transaction in top5RecentTransactions)
+                        {
+                            <tr>
+                                <td>@transaction.Title</td>
+                                <td>@transaction.Amount</td>
+                                <td>@transaction.Type</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    
+
+    </div>
+        <div class="col-md-12">
+            <div class="dashboard-card bg-lightorange text-white text-center">
+                <h3>Financial Overview</h3>
+                <MudPaper Class="pa-4">
+                    <MudChart Class="custom-chart" ChartType="ChartType.Bar" ChartSeries="@Series" XAxisLabels="@XAxisLabels" Width="100%" Height="800px" LabelFormat="0" />
+                </MudPaper>
+            </div>
+    </div>
+</div>
+
+
+
+
+@code {
+    private decimal totalBalance;
+    private decimal totalIncome;
+    private decimal totalExpense;
+    private decimal remainingDebt;
+    private decimal totalPaidAmount;
+    private decimal highestIncome;
+    private decimal lowestIncome;
+    private decimal highestExpense;
+    private decimal lowestExpense;
+    private decimal highestDebtAmount;
+    private decimal lowestDebtAmount;
+    private decimal totalDebt;
+    private int totalTransactions;
+
+    private List<Models.Transaction> top5RecentTransactions = new List<Models.Transaction>();
+
+    private double[] chartData;
+    private string[] chartLabels = { "Income", "Expense", "Total Debt" };
+
+    private int Index = -1; // default value cannot be 0 -> first selected index is 0.
+
+    public List<ChartSeries> Series = new List<ChartSeries>()
+    {
+        new ChartSeries() { Name = "Highest", Data = new double[] { 0, 0, 0 } },
+        new ChartSeries() { Name = "Lowest", Data = new double[] { 0, 0, 0 } }
+    };
+    public string[] XAxisLabels = { "Income", "Expense", "Debt" };
+
+    protected override void OnInitialized()
+    {
+        totalIncome = TransactionDao.GetTotalIncomeAmount();
+        totalExpense = TransactionDao.GetTotalExpenseAmount();
+        highestIncome = TransactionDao.GetHighestIncomeAmount();
+        lowestIncome = TransactionDao.GetLowestIncomeAmount();
+        highestExpense = TransactionDao.GetHighestExpenseAmount();
+        lowestExpense = TransactionDao.GetLowestExpenseAmount();
+        highestDebtAmount = DebtDao.GetHighestDebtAmount();
+        lowestDebtAmount = DebtDao.GetLowestDebtAmount();
+        remainingDebt = DebtDao.GetTotalDebtRemainingAmount();
+        totalPaidAmount = DebtDao.GetTotalPaidAmount();
+        totalDebt = remainingDebt + totalPaidAmount;
+        totalBalance = totalIncome + remainingDebt - totalExpense;
+        totalTransactions = TransactionDao.GetTotalTransactionCount() + DebtDao.GetTotalDebtCount();
+
+        chartData = new double[] { (double)totalIncome, (double)totalExpense, (double)totalDebt };
+        Series[0].Data = new double[] { (double)highestIncome, (double)highestExpense, (double)highestDebtAmount };
+        Series[1].Data = new double[] { (double)lowestIncome, (double)lowestExpense, (double)lowestDebtAmount };
+
+        top5RecentTransactions = TransactionDao.GetTop5RecentTransactions();
+    }
+}
