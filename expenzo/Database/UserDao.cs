@@ -72,5 +72,15 @@ namespace expenzo.Database
             var count = (long)await command.ExecuteScalarAsync();
             return count > 0;
         }
+
+        public async Task<bool> AnyUserExists()
+        {
+            using var connection = _context.GetConnection();
+            connection.Open();
+            var command = connection.CreateCommand();
+            command.CommandText = "SELECT COUNT(1) FROM Users";
+            var count = (long)await command.ExecuteScalarAsync();
+            return count > 0;
+        }
     }
 }
