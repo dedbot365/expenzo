@@ -157,6 +157,15 @@ namespace expenzo.Database
             return result != DBNull.Value ? Convert.ToDecimal(result) : 0;
         }
 
+        public int GetTotalTransactionCount()
+        {
+            using var connection = _context.GetConnection();
+            connection.Open();
+            var command = connection.CreateCommand();
+            command.CommandText = "SELECT COUNT(*) FROM Transactions";
+            var result = command.ExecuteScalar();
+            return result != DBNull.Value ? Convert.ToInt32(result) : 0;
+        }
 
 
 
