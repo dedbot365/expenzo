@@ -89,7 +89,7 @@
         categories = CategoryService.GetCategories();
         FilterCategories();
     }
-
+    //Filter categories based on the search term
     private void FilterCategories()
     {
         if (string.IsNullOrWhiteSpace(searchTerm))

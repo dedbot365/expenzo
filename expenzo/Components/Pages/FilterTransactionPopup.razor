@@ -86,7 +86,7 @@
     {
         categories = CategoryService.GetCategories().Select(c => c.Name).ToList();
     }
-
+    // Apply the filter
     private void ApplyFilter()
     {
         var filteredTransactions = TransactionService.GetTransactions().Where(transaction =>

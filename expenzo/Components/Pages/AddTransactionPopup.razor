@@ -86,9 +86,10 @@
     {
         categories = CategoryService.GetCategories();
     }
-
+    // Add the transaction
     private void AddTransaction()
     {
+        // Validate the transaction
         if (newTransaction.Type == "Expense")
         {
             var totalIncome = TransactionService.GetTotalIncomeAmount();
@@ -102,7 +103,7 @@
                 return;
             }
         }
-
+        // Add the transaction and show the message
         TransactionService.AddTransaction(newTransaction);
         message = "Transaction added successfully.";
         messageClass = "alert alert-success";

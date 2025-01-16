@@ -22,7 +22,7 @@
     {
         sources = DebtService.GetDebts().Select(d => d.DebtSource).Distinct().ToList();
     }
-
+    //Apply the filter
     private void ApplyFilter()
     {
         var filteredDebts = DebtService.GetDebts().Where(debt =>
@@ -35,6 +35,7 @@
         OnFilter.InvokeAsync(filteredDebts);
         OnClose.InvokeAsync();
     }
+    //Clear the filters
 
     private void ClearFilters()
     {

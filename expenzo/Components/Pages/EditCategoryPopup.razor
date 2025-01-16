@@ -7,10 +7,11 @@
     public EventCallback OnClose { get; set; }
 
     [Parameter]
-    public Models.Category Category { get; set; } = new Models.Category();
+    public Models.Category Category { get; set; } = new Models.Category(); // Category to be edited
 
     private string errorMessage = string.Empty;
 
+    // Save the category
     private void SaveCategory()
     {
         if (string.IsNullOrWhiteSpace(Category.Name))

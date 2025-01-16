@@ -57,10 +57,7 @@
     private Models.Transaction transactionToEdit = new Models.Transaction();
     private int transactionToDeleteId;
     private string searchTerm = string.Empty;
-
-    [Inject]
-    private ITransactionService TransactionService { get; set; }
-
+    
     protected override void OnInitialized()
     {
         transactions = TransactionService.GetTransactions();

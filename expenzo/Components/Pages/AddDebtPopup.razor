@@ -82,7 +82,7 @@
             successMessage = string.Empty;
         }
     }
-
+    // Reset the new debt object
     private void ResetNewDebt()
     {
         newDebt = new Models.Debt
@@ -93,7 +93,7 @@
                 PaidAmount = 0
             };
     }
-
+    // Add a new debt
     private void AddDebt()
     {
         newDebt.DebtId = nextDebtId++;

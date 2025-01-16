@@ -10,7 +10,8 @@
     public EventCallback OnClose { get; set; }
 
     [Parameter]
-    public Models.Category Category { get; set; } = new Models.Category();
+    public Models.Category Category { get; set; } = new Models.Category(); // Category to be deleted
+    // Confirm the deletion of the category
 
     private void ConfirmDelete()
     {
