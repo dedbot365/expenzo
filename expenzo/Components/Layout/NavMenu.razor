@@ -1,4 +1,6 @@
-﻿@inject AuthenticationStateService authStateService
+﻿@using MudBlazor
+
+@inject AuthenticationStateService authStateService
 @inject NavigationManager Navigation
 <div class="top-row ps-3 navbar navbar-dark">
     <div class="container-fluid">
@@ -28,7 +30,7 @@
         </div>
         <div class="nav-item px-3">
             <NavLink class="nav-link" href="transaction">
-                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Transactions
+                <MudIcon Icon="@Icons.Material.Filled.Money" style="margin-right: 5px;" /> Transactions
             </NavLink>
         </div>
         <div class="nav-item px-3">
@@ -39,13 +41,13 @@
 
         <div class="nav-item px-3">
             <NavLink class="nav-link" href="edit-user">
-                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Edit User
+                <MudIcon Icon="@Icons.Material.Filled.Settings" style="margin-right: 5px;" /> Edit User
             </NavLink>
         </div>
 
         <div class="nav-item px-3">
             <NavLink class="nav-link" href="" @onclick="Logout">
-                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Logout
+                <MudIcon Icon="@Icons.Material.Filled.Logout" style="margin-right: 5px;" /> Logout
             </NavLink>
         </div>
     </nav>

@@ -1,6 +1,33 @@
 ﻿@page "/pay-debt-popup"
 @inject IDebtService DebtService
+@inject ITransactionService TransactionService
 
+@if (IsVisible)
+{
+    <div class="modal d-block" tabindex="-1" style="background-color: rgba(0, 0, 0, 0.5);">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Pay Debt</h5>
+                    <button type="button" class="btn-close" aria-label="Close" @onclick="() => OnClose.InvokeAsync()"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="paymentAmount" class="form-label">Payment Amount:</label>
+                        <input type="number" id="paymentAmount" class="form-control" @bind="paymentAmount" />
+                    </div>
+                    <div class="d-flex justify-content-end">
+                        <button class="btn btn-primary" @onclick="PayDebt">Pay</button>
+                    </div>
+                    @if (!string.IsNullOrEmpty(message))
+                    {
+                        <div class="@messageClass mt-3">@message</div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+}
 
 @code {
     [Parameter]
@@ -39,6 +66,17 @@
             return;
         }
 
+        var totalIncome = TransactionService.GetTotalIncomeAmount();
+        var totalExpense = TransactionService.GetTotalExpenseAmount();
+        var totalRemainingDebts = DebtService.GetTotalDebtRemainingAmount();
+
+        if ((totalIncome - totalExpense + totalRemainingDebts) < paymentAmount)
+        {
+            message = "Insufficient balance to pay this debt.";
+            messageClass = "alert alert-danger";
+            return;
+        }
+
         if (paymentAmount > SelectedDebt.RemainingAmount)
         {
             message = "Payment amount cannot be more than the remaining amount.";
@@ -59,31 +97,4 @@
         message = "Payment successful.";
         messageClass = "alert alert-success";
     }
-}
-
-@if (IsVisible)
-{
-    <div class="modal d-block" tabindex="-1" style="background-color: rgba(0, 0, 0, 0.5);">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Pay Debt</h5>
-                    <button type="button" class="btn-close" aria-label="Close" @onclick="() => OnClose.InvokeAsync()"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="mb-3">
-                        <label for="paymentAmount" class="form-label">Payment Amount:</label>
-                        <input type="number" id="paymentAmount" class="form-control" @bind="paymentAmount" />
-                    </div>
-                    <div class="d-flex justify-content-end">
-                        <button class="btn btn-primary" @onclick="PayDebt">Pay</button>
-                    </div>
-                    @if (!string.IsNullOrEmpty(message))
-                    {
-                        <div class="@messageClass mt-3">@message</div>
-                    }
-                </div>
-            </div>
-        </div>
-    </div>
 }
