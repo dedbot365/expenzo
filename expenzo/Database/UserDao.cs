@@ -82,5 +82,19 @@ namespace expenzo.Database
             var count = (long)await command.ExecuteScalarAsync();
             return count > 0;
         }
+
+        public async Task<bool> UpdateUser(User user) // Add this method
+        {
+            using var connection = _context.GetConnection();
+            connection.Open();
+            var command = connection.CreateCommand();
+            command.CommandText = "UPDATE Users SET UserName = @UserName, Password = @Password, Currency = @Currency WHERE UserId = @UserId";
+            command.Parameters.AddWithValue("@UserName", user.UserName);
+            command.Parameters.AddWithValue("@Password", user.Password);
+            command.Parameters.AddWithValue("@Currency", user.Currency);
+            command.Parameters.AddWithValue("@UserId", user.UserId);
+            var result = await command.ExecuteNonQueryAsync();
+            return result > 0;
+        }
     }
 }

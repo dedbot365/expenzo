@@ -7,5 +7,6 @@ namespace expenzo.Services.Interfaces
         Task<User> LoginUser(string username, string password);
         Task<bool> UserExists(string username);
         Task<bool> IsUserLoggedIn();
+        Task<bool> UpdateUser(User user); 
     }
 }

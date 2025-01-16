@@ -8,11 +8,13 @@ namespace expenzo.Services
     public class UserService : IUserService
     {
         private readonly UserDao _userDao;
+        private readonly EncryptionService _encryptionService;
         private static ConcurrentDictionary<string, bool> _loggedInUsers = new ConcurrentDictionary<string, bool>();
 
         public UserService(UserDao userDao, EncryptionService encryptionService)
         {
             _userDao = userDao;
+            _encryptionService = encryptionService;
             SeedAdminUser(encryptionService).Wait();
         }
 
@@ -23,14 +25,14 @@ namespace expenzo.Services
                 return false;
             }
 
-            user.Password = new EncryptionService().Encrypt(user.Password); // Encrypt the password
+            user.Password = _encryptionService.Encrypt(user.Password); // Encrypt the password
             _userDao.AddUser(user);
             return true;
         }
 
         public async Task<User> LoginUser(string username, string password)
         {
-            var encryptedPassword = new EncryptionService().Encrypt(password); // Encrypt the password for comparison
+            var encryptedPassword = _encryptionService.Encrypt(password); // Encrypt the password for comparison
             var user = await _userDao.GetUser(username, encryptedPassword);
             if (user != null)
             {
@@ -47,6 +49,12 @@ namespace expenzo.Services
         public Task<bool> IsUserLoggedIn()
         {
             return Task.FromResult(_loggedInUsers.ContainsKey("username") && _loggedInUsers["username"]);
+        }
+
+        public async Task<bool> UpdateUser(User user)
+        {
+            user.Password = _encryptionService.Encrypt(user.Password); // Encrypt the password before updating
+            return await _userDao.UpdateUser(user);
         }
 
         public async Task<bool> AnyUserExists()
