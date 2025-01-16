@@ -167,6 +167,27 @@ namespace expenzo.Database
             return result != DBNull.Value ? Convert.ToInt32(result) : 0;
         }
 
+        public List<Transaction> GetTop5RecentTransactions()
+        {
+            var transactions = new List<Transaction>();
+            using var connection = _context.GetConnection();
+            connection.Open();
+            var command = connection.CreateCommand();
+            command.CommandText = "SELECT TransactionId, Title, Amount, Type FROM Transactions ORDER BY TransactionDate DESC LIMIT 5";
+            using var reader = command.ExecuteReader();
+            while (reader.Read())
+            {
+                transactions.Add(new Transaction
+                {
+                    TransactionId = reader.GetInt32(0),
+                    Title = reader.GetString(1),
+                    Amount = reader.GetDecimal(2),
+                    Type = reader.GetString(3)
+                });
+            }
+            return transactions;
+        }
+
 
 
     }
