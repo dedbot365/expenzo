@@ -8,9 +8,21 @@
         <div class="sidebar">
             <NavMenu />
         </div>
+        
+        
     }
+    
 
     <main>
+        @if (authStateService.IsAuthenticated())
+        {
+            <div class="top-row px-4">
+                
+            </div>
+        
+        
+        }
+        
         <article class="content px-4">
             @Body
         </article>
