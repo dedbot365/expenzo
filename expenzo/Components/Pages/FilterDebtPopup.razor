@@ -35,6 +35,15 @@
         OnFilter.InvokeAsync(filteredDebts);
         OnClose.InvokeAsync();
     }
+
+    private void ClearFilters()
+    {
+        dueDateStart = null;
+        dueDateEnd = null;
+        selectedSource = string.Empty;
+        selectedStatus = string.Empty;
+        ApplyFilter();
+    }
 }
 
 @if (IsVisible)
@@ -75,7 +84,10 @@
                             }
                         </select>
                     </div>
-                    <button class="btn btn-primary" @onclick="ApplyFilter">Apply Filter</button>
+                    <div class="d-flex justify-content-end">
+                        <button type="button" class="btn btn-secondary me-2" @onclick="ClearFilters">Clear</button>
+                        <button type="button" class="btn btn-primary" @onclick="ApplyFilter">Apply Filter</button>
+                    </div>
                 </div>
             </div>
         </div>

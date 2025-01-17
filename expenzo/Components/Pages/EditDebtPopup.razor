@@ -73,7 +73,7 @@
             {
                 DebtId = DebtToEdit.DebtId,
                 DebtAmount = DebtToEdit.DebtAmount,
-                RemainingAmount = DebtToEdit.RemainingAmount,
+                RemainingAmount = DebtToEdit.DebtAmount, // Set RemainingAmount to DebtAmount
                 PaidAmount = DebtToEdit.PaidAmount,
                 DebtTakenDate = DebtToEdit.DebtTakenDate,
                 DebtDueDate = DebtToEdit.DebtDueDate,
@@ -85,10 +85,11 @@
     }
 
     private void UpdateDebt()
-{
-    DebtService.UpdateDebt(debtToEdit);
-    ClosePopup();
-}
+    {
+        debtToEdit.RemainingAmount = debtToEdit.DebtAmount; // Ensure RemainingAmount is equal to DebtAmount
+        DebtService.UpdateDebt(debtToEdit);
+        ClosePopup();
+    }
 
     private void ClosePopup()
     {
