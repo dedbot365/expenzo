@@ -20,7 +20,7 @@ public class DatabaseContext
     {
         // Log the exception (you can use any logging framework or simply write to the console)
         Console.WriteLine($"An error occurred while creating the database path: {ex.Message}");
-        throw; // Re-throw the exception if you want to handle it further up the call stack
+        throw; 
     }
 }
 
