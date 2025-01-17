@@ -54,7 +54,7 @@
                             <InputDate id="dateEnd" class="form-control" @bind-Value="dateEnd" />
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" @onclick="() => OnClose.InvokeAsync()">Cancel</button>
+                            <button type="button" class="btn btn-secondary" @onclick="ClearFilters">Clear</button>
                             <button type="submit" class="btn btn-primary">Apply Filter</button>
                         </div>
                     </EditForm>
@@ -101,5 +101,16 @@
 
         OnFilter.InvokeAsync(filteredTransactions);
         OnClose.InvokeAsync();
+    }
+
+    private void ClearFilters()
+    {
+        amountMin = null;
+        amountMax = null;
+        selectedType = string.Empty;
+        selectedCategory = string.Empty;
+        dateStart = null;
+        dateEnd = null;
+        ApplyFilter();
     }
 }

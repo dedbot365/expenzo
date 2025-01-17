@@ -12,6 +12,12 @@
                     <button type="button" class="btn-close" aria-label="Close" @onclick="ClosePopup"></button>
                 </div>
                 <div class="modal-body">
+                    @if (!string.IsNullOrEmpty(successMessage))
+                    {
+                        <div class="alert alert-success" role="alert">
+                            @successMessage
+                        </div>
+                    }
                     <EditForm Model="newDebt" OnValidSubmit="AddDebt">
                         <DataAnnotationsValidator />
                         <ValidationSummary />
@@ -67,27 +73,29 @@
 
     private Models.Debt newDebt;
     private int nextDebtId = 1;
+    private string successMessage;
 
     protected override void OnParametersSet()
     {
         if (IsVisible)
         {
             ResetNewDebt();
+            successMessage = string.Empty;
         }
     }
 
     private void ResetNewDebt()
     {
         newDebt = new Models.Debt
-        {
-            DebtTakenDate = DateTime.Now.Date,
-            DebtDueDate = DateTime.Now.Date.AddDays(1),
-            RemainingAmount = 0,
-            PaidAmount = 0
-        };
+            {
+                DebtTakenDate = DateTime.Now.Date,
+                DebtDueDate = DateTime.Now.Date.AddDays(1),
+                RemainingAmount = 0,
+                PaidAmount = 0
+            };
     }
 
-   private void AddDebt()
+    private void AddDebt()
     {
         newDebt.DebtId = nextDebtId++;
         newDebt.RemainingAmount = newDebt.DebtAmount;
@@ -98,7 +106,7 @@
         }
 
         DebtService.AddDebt(newDebt);
-        ClosePopup();
+        successMessage = "Debt added successfully!";
     }
 
     private void ClosePopup()

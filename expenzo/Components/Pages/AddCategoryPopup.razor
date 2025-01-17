@@ -13,17 +13,19 @@
     public Models.Category Category { get; set; } = new Models.Category();
 
     private string errorMessage = string.Empty;
+    private string successMessage = string.Empty;
 
     private void SaveCategory()
     {
         if (string.IsNullOrWhiteSpace(Category.Name))
         {
             errorMessage = "Category name cannot be empty.";
+            successMessage = string.Empty;
             return;
         }
 
         CategoryService.AddCategory(Category);
-        OnClose.InvokeAsync();
+        successMessage = "Category added successfully!";
         errorMessage = string.Empty;
     }
 }
@@ -38,6 +40,12 @@
                     <button type="button" class="btn-close" aria-label="Close" @onclick="() => OnClose.InvokeAsync()"></button>
                 </div>
                 <div class="modal-body">
+                    @if (!string.IsNullOrEmpty(successMessage))
+                    {
+                        <div class="alert alert-success" role="alert">
+                            @successMessage
+                        </div>
+                    }
                     <div class="mb-3">
                         <label for="categoryName" class="form-label">Category Name:</label>
                         <input type="text" class="form-control" id="categoryName" @bind="Category.Name">
