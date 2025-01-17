@@ -7,20 +7,28 @@ public class EncryptionService
 {
     private static byte[] key = Array.Empty<byte>();
     private static byte[] iv = Array.Empty<byte>();
+    private static readonly string keyPath;
+    private static readonly string ivPath;
 
     static EncryptionService()
     {
+        // Define paths for key and IV
+        var appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+        var folderPath = Path.Combine(appDataPath, "expenzo");
+        Directory.CreateDirectory(folderPath);
+        keyPath = Path.Combine(folderPath, "key.bin");
+        ivPath = Path.Combine(folderPath, "iv.bin");
+
         // Load key and IV from storage
         LoadKeyAndIV();
     }
 
     private static void LoadKeyAndIV()
     {
-        
-        if (File.Exists("key.bin") && File.Exists("iv.bin"))
+        if (File.Exists(keyPath) && File.Exists(ivPath))
         {
-            key = File.ReadAllBytes("key.bin");
-            iv = File.ReadAllBytes("iv.bin");
+            key = File.ReadAllBytes(keyPath);
+            iv = File.ReadAllBytes(ivPath);
         }
         else
         {
@@ -28,8 +36,8 @@ public class EncryptionService
             {
                 key = aes.Key;
                 iv = aes.IV;
-                File.WriteAllBytes("key.bin", key);
-                File.WriteAllBytes("iv.bin", iv);
+                File.WriteAllBytes(keyPath, key);
+                File.WriteAllBytes(ivPath, iv);
             }
         }
     }
